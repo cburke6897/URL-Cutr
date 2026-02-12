@@ -1,6 +1,6 @@
 from fastapi import FastAPI
+from app.api.routes.shorten import router as shorten_router
+
 app = FastAPI()
 
-@app.get("/health")
-def test():
-    return {"status": "ok"}
+app.include_router(shorten_router)
