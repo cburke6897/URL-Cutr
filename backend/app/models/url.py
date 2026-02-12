@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, func
-from app.db.session import Base
+from app.db.base import Base
 
 class URL(Base):
     __tablename__ = "urls"
