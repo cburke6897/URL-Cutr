@@ -5,7 +5,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - ./backend/nev
+      - ./backend/.env
     depends_on:
       - db
       - redis
@@ -28,13 +28,13 @@ services:
     ports:
       - "6379:6379"
 
-    adminer: 
-      image: adminer:5.4.2
-      container_name: url-shortener-adminer
-      ports:
-        - "8080:8080"
-      depends_on:
-        - db
+  adminer: 
+    image: adminer:5.4.2
+    container_name: url-shortener-adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
 
 volumes:
   postgres_data:
