@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import RedirectResponse
+import starlette.status as status
 from sqlalchemy.orm import Session
+
 from app.schemas.url import URLCreate, URLResponse
-from app.services.shortener import generate_code
 from app.crud import url as crud_url
 from app.db.session import SessionLocal
+from app.services.shortener import generate_code
 
 router = APIRouter()
 
@@ -21,9 +24,9 @@ def shorten_url(payload: URLCreate, request: Request, db: Session = Depends(get_
     while crud_url.get_url_by_code(db, code):
         code = generate_code()
 
-    db_url = crud_url.create(db, original_url=payload.original_url, code=code)
+    db_url = crud_url.create(db, original_url=str(payload.original_url), code=code)
 
-    base_url = str(request.base_url.rstrip("/"))
+    base_url = str(request.base_url).rstrip("/")
     short_url = f"{base_url}/r/{db_url.code}"
 
     return URLResponse(
@@ -31,3 +34,24 @@ def shorten_url(payload: URLCreate, request: Request, db: Session = Depends(get_
         code=db_url.code,
         original_url=db_url.original_url
     )
+
+@router.get("/r/{code}")
+def redirect(code: str, db: Session = Depends(get_db)):
+    url = crud_url.get_url_by_code(db, code)
+    if not url:
+        raise HTTPException(status_code=404, detail="URL not found")
+    url.clicks += 1
+    db.commit()
+    return RedirectResponse(url.original_url, status_code=302)
+
+
+@router.get("/stats/{code}")
+def get_stats(code: str, db: Session = Depends(get_db)):
+    url = crud_url.get_url_by_code(db, code)
+    if not url:
+        raise HTTPException(status_code=404, detail="URL not found")
+    return {
+        "original_url": url.original_url,
+        "clicks": url.clicks,
+        "created_at": url.created_at
+    }
