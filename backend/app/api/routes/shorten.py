@@ -1,6 +1,7 @@
+import code
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
-import starlette.status as status
+from app.services.cache import redis_client
 from sqlalchemy.orm import Session
 
 from app.schemas.url import URLCreate, URLResponse
@@ -40,9 +41,17 @@ def redirect(code: str, db: Session = Depends(get_db)):
     url = crud_url.get_url_by_code(db, code)
     if not url:
         raise HTTPException(status_code=404, detail="URL not found")
+    
     url.clicks += 1
     db.commit()
-    return RedirectResponse(url.original_url, status_code=302)
+
+    cached_url = redis_client.get(f"url:{code}")
+    if cached_url:
+        return RedirectResponse(cached_url, status_code=302)
+    
+    original_url = url.original_url
+    redis_client.set(f"url:{code}", original_url)
+    return RedirectResponse(original_url, status_code=302)
 
 
 @router.get("/stats/{code}")
