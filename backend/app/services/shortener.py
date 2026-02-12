@@ -1,5 +1,7 @@
-import string, random
+import string
+from nanoid import generate
+
+characters = string.ascii_letters + string.digits
 
 def generate_short_code(length=6):
-    characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(characters) for _ in range(length))
+    return generate(characters, length)
