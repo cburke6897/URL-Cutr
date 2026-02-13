@@ -2,12 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from app.services.cache import redis_client
 from sqlalchemy.orm import Session
-
-from backend.app.schemas.url_schema import URLCreate, URLResponse
-from backend.app.crud import url_crud as crud_url
+from app.schemas.url_schema import URLCreate, URLResponse
+from app.crud import url_crud as crud_url
 from app.db.session import SessionLocal
 from app.services.shortener import generate_code
-from backend.app.services import rate_limit
+from app.services.rate_limit import rate_limit
 
 router = APIRouter()
 
