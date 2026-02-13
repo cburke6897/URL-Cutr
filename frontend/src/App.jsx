@@ -1,5 +1,6 @@
+import "./App.css";
 import { useState } from "react";
-import './App.css';
+import Home from "./pages/Home";
 
 function App() {
   const [url, setUrl] = useState("");
@@ -14,12 +15,35 @@ function App() {
       const response = await fetch("http://localhost:8000/shorten", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ original_url: url })
+        body: JSON.stringify({ original_url: ensureHttp(url) }),
       });
 
       if (!response.ok) {
-        const err = await response.json();
-        setError(err.detail || "Something went wrong");
+        let message = 'Unknown error';
+        let error_text = null;
+
+        try {
+          error_text = await response.text();
+          console.error("Error response body:", error_text);
+        }
+        catch (e) {          
+          console.error("Failed to read error response text:", e);
+        }
+
+        if (response.status === 400) {
+          message = "Invalid URL format";
+        }
+        else if (response.status === 429) {
+          message = "Rate limit exceeded. Please try again later.";
+        }
+        else if (response.status === 422) {
+          message = "URL not entered";
+        }
+        else if (error_text) {
+          message = `Error ${response.status}: ${error_text}`;
+        }
+
+        setError(message);  
         return;
       }
 
@@ -31,42 +55,22 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
-      <div className="w-full max-w-lg bg-gray-800 p-8 rounded-xl shadow-lg text-center">
-        <h1 className="text-white text-3xl font-bold mb-6">URL Shortener</h1>
-
-        <input
-          type="text"
-          placeholder="Enter URL"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          className="w-full p-3 rounded-lg mb-4 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-
-        <button
-          onClick={shorten}
-          className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition"
-        >
-          Shorten
-        </button>
-
-        {shortUrl && (
-          <p className="text-green-400 mt-4">
-            Short URL:{" "}
-            <a href={shortUrl} className="underline text-indigo-300">
-              {shortUrl}
-            </a>
-          </p>
-        )}
-
-        {error && (
-          <p className="text-red-400 mt-4 font-semibold">
-            {error}
-          </p>
-        )}
-      </div>
-    </div>
+    <Home
+      url={url}
+      setUrl={setUrl}
+      shortUrl={shortUrl}
+      error={error}
+      shorten={shorten}
+    />
   );
+}
+
+function ensureHttp(url) {
+  console.log(url);
+  if (!/^https?:\/\//i.test(url)) {
+    return "http://" + url;
+  }
+  return url;
 }
 
 export default App;
