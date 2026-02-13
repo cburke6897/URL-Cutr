@@ -7,7 +7,7 @@ from app.crud import url_crud as crud_url
 from app.db.session import SessionLocal
 from app.services.shortener import generate_code
 from app.services.rate_limit import rate_limit
-
+from app.core.tlds import is_valid_tld
 router = APIRouter()
 
 # Retrieves a database session for each request and ensures it is closed after the request is processed
@@ -21,6 +21,11 @@ def get_db():
 # Endpoint to create a shortened URL
 @router.post("/shorten", response_model = URLResponse)
 def shorten_url(payload: URLCreate, request: Request, db: Session = Depends(get_db)):
+    # Validate that the provided original URL is in a valid format and uses the HTTP or HTTPS scheme
+    if (not is_valid_tld(str(payload.original_url))):
+        print("Invalid TLD")
+        raise HTTPException(status_code=400, detail="Invalid URL format")
+
     # Implement rate limiting based on the client's IP address
     client_ip = request.client.host
     rate_limit(client_ip)
