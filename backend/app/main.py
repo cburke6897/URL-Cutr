@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.session import engine
 from app.db.base import Base
-from backend.app.api.routes.routes import router as shorten_router
+from app.api.routes.routes import router as shorten_router
 
 app = FastAPI()
 
