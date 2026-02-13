@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+/* Tailwind v4 CSS-based theming */
+@theme {
+  --color-bg-light: oklch(92% 0.12 270);
+  --color-bg-dark: oklch(12% 0.13 270);
+
+  --color-surface-light: oklch(96% 0.08 270);
+  --color-surface-dark: oklch(22% 0.14 270);
+
+  --color-text-light: oklch(6% 0 0);
+  --color-text-dark: oklch(100% 0 0);
+
+  --color-primary: oklch(60% 0.40 266);
+  --color-primary-dark: oklch(52% 0.43 266);
+
+  --color-button: oklch(45% 0.08 266);
+  --color-button-hover: oklch(40% 0.10 266);
+  --color-button-dark: oklch(55% 0.12 266);
+  --color-button-hover-dark: oklch(50% 0.14 266);
+
+  --color-shorten-button: oklch(60% 0.25 266);
+  --color-shorten-button-hover: oklch(55% 0.27 266);
+  --color-shorten-button-dark: oklch(52% 0.40 266);
+  --color-shorten-button-hover-dark: oklch(58% 0.46 266);
+
+  --color-input-bar: oklch(94% 0.20 270);
+  --color-input-bar-dark: oklch(28% 0.12 270);
+
+  --color-input-text: oklch(15% 0 0);
+  --color-input-text-dark: oklch(95% 0 0);
+
+  --color-link: oklch(60% 0.40 266);
+  --color-link-dark: oklch(65% 0.38 266);
+}
+
+/* Your custom dark variant */
+@custom-variant dark (&:is(.dark, .dark *));
