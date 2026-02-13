@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.url import URL
+from backend.app.models.url_model import URL
 
 # Retrieve a URL entry from the database based on the provided code
 def get_url_by_code(db: Session, code: str):
