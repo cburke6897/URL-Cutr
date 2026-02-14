@@ -6,6 +6,7 @@ function App() {
   const [shortUrl, setShortUrl] = useState("");
   const [error, setError] = useState("");
   const [expiration, setExpiration] = useState(5);
+  const [code, setCode] = useState("");
 
   const shorten = async () => {
     setError("");
@@ -15,7 +16,7 @@ function App() {
       const response = await fetch("http://localhost:8000/shorten", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ original_url: ensureHttp(url), delete_after: expiration}),
+        body: JSON.stringify({ original_url: ensureHttp(url), delete_after: expiration, code: code }),
       });
 
       if (!response.ok) {
@@ -38,6 +39,9 @@ function App() {
         }
         else if (response.status === 422) {
           message = "URL not entered";
+        }
+        else if (response.status === 450) {
+          message = "Custom code already exists";
         }
         else if (error_text) {
           message = `Error ${response.status}: ${error_text}`;
@@ -63,6 +67,8 @@ function App() {
       expiration={expiration}
       setExpiration={setExpiration}
       shorten={shorten}
+      code={code}
+      setCode={setCode}
     />
   );
 }

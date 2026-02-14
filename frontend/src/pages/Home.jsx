@@ -1,23 +1,27 @@
-import UrlInput from "../components/UrlInput";
+import TextInput from "../components/TextInput";
 import ShortenButton from "../components/ShortenButton";
 import CopyButton from "../components/CopyButton";
 import LinkExpirerDropdown from "../components/LinkExpirerDropdown";
 import ThemeToggle from "../components/ThemeToggle";
 
-export default function Home({ url, setUrl, shortUrl, error, expiration, setExpiration, shorten }) {
+export default function Home({ url, setUrl, shortUrl, error, expiration, setExpiration, shorten, code, setCode }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] transition-colors p-4">
-      <div className="w-full max-w-lg bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-8 rounded-xl shadow-lg text-center transition-colors">
+      <div className="min-h-[23.8rem] w-full max-w-lg bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
         
         <h1 className="text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] text-3xl font-bold mb-4 transition-colors">
           URL Shortener
         </h1>
 
-        <UrlInput value={url} onChange={setUrl} />
+    
+        <div className="flex flex-col gap-3 items-center p-3">
+          <TextInput placeholder="Enter URL" value={url} onChange={setUrl} additionalClasses="w-full" title="Enter the URL you want to shorten"/>
+          <TextInput placeholder="Enter Code (Optional)" value={code} onChange={setCode} additionalClasses="w-full" title="Enter a custom code for your shortened URL (optional)" />
+        </div>
 
-        <div className="flex justify-center mt-3">
-          <div className="w-4/5">
-            <LinkExpirerDropdown value={expiration} onChange={setExpiration} />
+        <div className="flex justify-center">
+          <div className="w-100">
+            <LinkExpirerDropdown value={expiration} onChange={setExpiration} /> 
           </div>
         </div>
 
