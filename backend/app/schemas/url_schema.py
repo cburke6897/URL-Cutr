@@ -4,6 +4,7 @@ from sqlalchemy import DateTime
 class URLCreate(BaseModel):
     original_url: HttpUrl
     delete_after: int | None = None
+    code : str | None = None
 
 class URLResponse(BaseModel):
     code: str
