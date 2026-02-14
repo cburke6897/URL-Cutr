@@ -30,7 +30,14 @@ def shorten_url(payload: URLCreate, request: Request, db: Session = Depends(get_
     client_ip = request.client.host
     rate_limit(client_ip)
 
-    code = generate_code()
+    if not payload.code:
+        code = generate_code()
+    else:
+        code = payload.code
+        # Validate that the provided custom code is unique and does not already exist in the database
+        if crud_url.get_url_by_code(db, code):
+            raise HTTPException(status_code=450, detail="Custom code already exists")
+
     
     # Ensure the generated code is unique by checking the database and regenerating if necessary
     while crud_url.get_url_by_code(db, code):
