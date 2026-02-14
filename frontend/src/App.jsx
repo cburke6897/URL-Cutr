@@ -5,6 +5,7 @@ function App() {
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
   const [error, setError] = useState("");
+  const [expiration, setExpiration] = useState(5);
 
   const shorten = async () => {
     setError("");
@@ -14,7 +15,7 @@ function App() {
       const response = await fetch("http://localhost:8000/shorten", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ original_url: ensureHttp(url) }),
+        body: JSON.stringify({ original_url: ensureHttp(url), delete_after: expiration}),
       });
 
       if (!response.ok) {
@@ -59,6 +60,8 @@ function App() {
       setUrl={setUrl}
       shortUrl={shortUrl}
       error={error}
+      expiration={expiration}
+      setExpiration={setExpiration}
       shorten={shorten}
     />
   );
