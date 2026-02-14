@@ -18,6 +18,7 @@ export default function LinkExpirerDropdown({ value, onChange }) {
         value={value === null ? "Never expire" : Object.entries(LINK_EXPIRATION_OPTIONS).find(([_, v]) => v === value)?.[0] || "5 minutes"}
         onChange={(e) => onChange(LINK_EXPIRATION_OPTIONS[e.target.value])}
         className="flex-1 p-3 rounded-lg bg-[var(--color-input-bar)] dark:bg-[var(--color-input-bar-dark)] text-[var(--color-input-text)] dark:text-[var(--color-input-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-button)] transition-colors"
+        title="Select when the shortened URL should expire"
       >
         {Object.keys(LINK_EXPIRATION_OPTIONS).map((label) => (
           <option key={label} value={label}>
