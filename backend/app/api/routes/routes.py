@@ -37,7 +37,7 @@ def shorten_url(payload: URLCreate, request: Request, db: Session = Depends(get_
         code = generate_code()
     
     # Create a new URL entry in the database with the original URL and the generated code
-    db_url = crud_url.create(db, original_url=str(payload.original_url), code=code)
+    db_url = crud_url.create(db, original_url=str(payload.original_url), code=code, delete_after = None if payload.delete_after == 0 else payload.delete_after)
 
     # Construct the shortened URL using the base URL of the request and the generated code
     base_url = str(request.base_url).rstrip("/")
@@ -47,7 +47,8 @@ def shorten_url(payload: URLCreate, request: Request, db: Session = Depends(get_
     return URLResponse(
         short_url=short_url,
         code=db_url.code,
-        original_url=db_url.original_url
+        original_url=db_url.original_url,
+        delete_at=str(db_url.delete_at)
     )
 
 # Endpoint to redirect to the original URL based on the provided code
