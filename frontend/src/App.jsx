@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Home from "./pages/Home";
 
 function App() {
@@ -7,6 +7,16 @@ function App() {
   const [error, setError] = useState("");
   const [expiration, setExpiration] = useState(5);
   const [code, setCode] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get("error");
+    if (msg) {
+      setError(msg);
+    }
+
+    window.history.replaceState({}, "", "/");
+  }, []);
 
   const shorten = async () => {
     setError("");

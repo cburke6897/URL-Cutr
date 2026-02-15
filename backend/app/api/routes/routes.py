@@ -64,7 +64,7 @@ def redirect(code: str, db: Session = Depends(get_db)):
     # Look up the original URL in the database using the provided code
     url = crud_url.get_url_by_code(db, code)
     if not url:
-        raise HTTPException(status_code=404, detail="URL not found")
+        return RedirectResponse("http://localhost:5173/?error=Invalid+URL", status_code=302)
     
     # Increment the click count for the URL and commit the change to the database
     url.clicks += 1
