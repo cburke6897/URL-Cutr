@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.session import engine
 from app.db.base import Base
-from app.api.routes.routes import router as shorten_router
+from backend.app.api.routes.url_routes import router as shorten_router
 from app.core.tlds import load_tlds
 from app.services.cleanup import delete_expired_urls_periodically
 
