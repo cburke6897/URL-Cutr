@@ -1,5 +1,5 @@
 import TextInput from "../components/TextInput";
-import ShortenButton from "../components/ShortenButton";
+import EnterButton from "../components/EnterButton";
 import CopyButton from "../components/CopyButton";
 import LinkExpirerDropdown from "../components/LinkExpirerDropdown";
 import ThemeToggle from "../components/ThemeToggle";
@@ -26,7 +26,7 @@ export default function Home({ url, setUrl, shortUrl, error, expiration, setExpi
         </div>
 
         <div className="flex items-center gap-1 mt-3">
-          <ShortenButton onClick={shorten} />
+          <EnterButton onClick={shorten} title="Shorten URL" />
           <CopyButton text={shortUrl} disabled={!shortUrl} />
         </div>
 
