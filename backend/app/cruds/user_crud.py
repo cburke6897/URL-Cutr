@@ -13,3 +13,7 @@ def create(db: Session, username: str, email: str, password: str):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+# Retrieve a user by their email address
+def get_by_email(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first()
