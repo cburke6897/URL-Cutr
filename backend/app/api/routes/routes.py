@@ -3,11 +3,12 @@ from fastapi.responses import RedirectResponse
 from app.services.cache import redis_client
 from sqlalchemy.orm import Session
 from app.schemas.url_schema import URLCreate, URLResponse
-from app.crud import url_crud as crud_url
+from app.cruds import url_crud
 from app.db.session import SessionLocal
 from app.services.shortener import generate_code
 from app.services.rate_limit import rate_limit
 from app.core.tlds import is_valid_tld
+
 router = APIRouter()
 
 # Retrieves a database session for each request and ensures it is closed after the request is processed
@@ -35,16 +36,16 @@ def shorten_url(payload: URLCreate, request: Request, db: Session = Depends(get_
     else:
         code = payload.code
         # Validate that the provided custom code is unique and does not already exist in the database
-        if crud_url.get_url_by_code(db, code):
+        if url_crud.get_url_by_code(db, code):
             raise HTTPException(status_code=450, detail="Custom code already exists")
 
     
     # Ensure the generated code is unique by checking the database and regenerating if necessary
-    while crud_url.get_url_by_code(db, code):
+    while url_crud.get_url_by_code(db, code):
         code = generate_code()
     
     # Create a new URL entry in the database with the original URL and the generated code
-    db_url = crud_url.create(db, original_url=str(payload.original_url), code=code, delete_after = None if payload.delete_after == 0 else payload.delete_after)
+    db_url = url_crud.create(db, original_url=str(payload.original_url), code=code, delete_after = None if payload.delete_after == 0 else payload.delete_after)
 
     # Construct the shortened URL using the base URL of the request and the generated code
     base_url = str(request.base_url).rstrip("/")
@@ -62,7 +63,7 @@ def shorten_url(payload: URLCreate, request: Request, db: Session = Depends(get_
 @router.get("/r/{code}")
 def redirect(code: str, db: Session = Depends(get_db)):
     # Look up the original URL in the database using the provided code
-    url = crud_url.get_url_by_code(db, code)
+    url = url_crud.get_url_by_code(db, code)
     if not url:
         return RedirectResponse("http://localhost:5173/?error=Invalid+URL", status_code=302)
     
@@ -85,7 +86,7 @@ def redirect(code: str, db: Session = Depends(get_db)):
 @router.get("/stats/{code}")
 def get_stats(code: str, db: Session = Depends(get_db)):
     # Look up the URL in the database using the provided code
-    url = crud_url.get_url_by_code(db, code)
+    url = url_crud.get_url_by_code(db, code)
     if not url:
         raise HTTPException(status_code=404, detail="URL not found")
     
