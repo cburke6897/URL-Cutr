@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.user_model import User
-from app.core.security import hash_password
+from app.core.security import hash_password, verify_password, create_access_token
 
 
 # Create a new user entry in the database
@@ -17,3 +17,19 @@ def create(db: Session, username: str, email: str, password: str):
 # Retrieve a user by their email address
 def get_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
+
+# Authenticate a user by verifying their email and password
+def authenticate_user(db: Session, email: str, password: str):
+    user = get_by_email(db, email)
+    if not user:
+        return None
+    if not verify_password(password, user.hashed_password):
+        return None
+    return user
+
+# Generate an access token for a user
+def login(db: Session, email: str, password: str):
+    user = authenticate_user(db, email, password)
+    if not user:
+        return None
+    return create_access_token(data={"sub": user.email})
