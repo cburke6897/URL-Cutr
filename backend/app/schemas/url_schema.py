@@ -1,5 +1,4 @@
 from pydantic import BaseModel, HttpUrl
-from sqlalchemy import DateTime
 
 class URLCreate(BaseModel):
     original_url: HttpUrl
