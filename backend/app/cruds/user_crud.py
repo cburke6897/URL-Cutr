@@ -36,4 +36,4 @@ def login(db: Session, email: str, password: str):
     user = authenticate_user(db, email, password)
     if not user:
         return None
-    return create_access_token(data={"sub": user.email})
+    return create_access_token(data={"sub": user.id})
