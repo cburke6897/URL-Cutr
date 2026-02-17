@@ -7,10 +7,9 @@ export default function DropdownMenu() {
     Home: () => {
       window.location.assign("/");
     },
-    "About URL Cutr": () => {},
-    "Pricing (Soon)": () => {},
-    "Docs + Tips": () => {},
-    "Contact Support": () => {},
+    "Sign in": () => {
+      window.location.assign("/auth");
+    },
   };
 
   const handleOptionClick = (action) => {
