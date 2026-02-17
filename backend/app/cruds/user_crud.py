@@ -18,6 +18,10 @@ def create(db: Session, username: str, email: str, password: str):
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
+# Retrieve a user by their ID
+def get_user_by_id(db: Session, user_id: int):
+    return db.query(User).filter(User.id == user_id).first()
+
 # Authenticate a user by verifying their email and password
 def authenticate_user(db: Session, email: str, password: str):
     user = get_user_by_email(db, email)
