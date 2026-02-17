@@ -7,6 +7,8 @@ export default function DropdownMenu() {
     localStorage.getItem("theme") || "dark"
   );
 
+  const token = localStorage.getItem("token");
+
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
   };
@@ -16,10 +18,18 @@ export default function DropdownMenu() {
       window.location.assign("/");
     },
     "Toggle Theme": toggleTheme,
-    "Sign in": () => {
-      window.location.assign("/auth");
-    },
   };
+
+  if (token) {
+    menuOptions["Sign out"] = () => {
+      localStorage.removeItem("token");
+      window.location.assign("/");
+    };
+  } else {
+    menuOptions["Sign in"] = () => {
+      window.location.assign("/auth");
+    };
+  }
 
   const handleOptionClick = (action) => {
     action();
