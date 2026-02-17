@@ -1,17 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.db.session import SessionLocal
+from app.db.session import get_db
 from app.cruds import user_crud
 
 router = APIRouter()
-
-# Retrieves a database session for each request and ensures it is closed after the request is processed
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.post("/login")
 def login(email: str, password: str, db: Session = Depends(get_db)):

@@ -4,20 +4,12 @@ from app.services.cache import redis_client
 from sqlalchemy.orm import Session
 from app.schemas.url_schema import URLCreate, URLResponse
 from app.cruds import url_crud
-from app.db.session import SessionLocal
+from app.db.session import get_db
 from app.services.shortener import generate_code
 from app.services.rate_limit import rate_limit
 from app.core.tlds import is_valid_tld
 
 router = APIRouter()
-
-# Retrieves a database session for each request and ensures it is closed after the request is processed
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Endpoint to create a shortened URL
 @router.post("/shorten", response_model = URLResponse)
