@@ -11,3 +11,10 @@ def login(email: str, password: str, db: Session = Depends(get_db)):
     if not access_token:
         raise HTTPException(status_code=400, detail="Invalid email or password")
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/signup")
+def signup(email: str, username: str, password: str, db: Session = Depends(get_db)):
+    user = user_crud.create_user(db, email, username, password)
+    if not user:
+        raise HTTPException(status_code=400, detail="Email or username already registered")
+    return {"message": "User created successfully"}
