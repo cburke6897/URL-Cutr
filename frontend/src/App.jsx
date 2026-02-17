@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Home from "./pages/Home";
+import Auth from "./pages/Auth";
 
 function App() {
   const [url, setUrl] = useState("");
@@ -9,6 +10,10 @@ function App() {
   const [code, setCode] = useState("");
 
   useEffect(() => {
+    if (window.location.pathname === "/auth") {
+      return;
+    }
+
     const params = new URLSearchParams(window.location.search);
     const msg = params.get("error");
     if (msg) {
@@ -67,6 +72,10 @@ function App() {
       setError("Network error");
     }
   };
+
+  if (window.location.pathname === "/auth") {
+    return <Auth />;
+  }
 
   return (
     <Home
