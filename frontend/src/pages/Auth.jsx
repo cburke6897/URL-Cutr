@@ -19,20 +19,23 @@ export default function Auth() {
     const submitText = isSignup ? "Create Account" : "Log In";
 
     useEffect(() => {
+        setSuccess("");
+        setError("");
+        setEmail("");
+        setUsername("");
+        setPassword("");
+        setConfirmPassword("");
+        setShowPassword(false);
+        setShowConfirmPassword(false);
+    }, [mode]);
+
+    useEffect(() => {
         const param = new URLSearchParams(window.location.search);
         const successMsg = param.get("success");
         if (successMsg) {
             setSuccess(successMsg);
         }
-
-        setEmail("");
-        setUsername("");
-        setPassword("");
-        setConfirmPassword("");
-        setError("");
-        setShowPassword(false);
-        setShowConfirmPassword(false);
-    }, [mode]);
+    }, []);
 
     const ensureValidEmail = (value) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -47,6 +50,7 @@ export default function Auth() {
 
     const handleSubmit = async () => {
         setSuccess("");
+        setError("");
 
         if (isSignup) {
             if (!email || !username || !password || !confirmPassword) {
@@ -111,7 +115,10 @@ export default function Auth() {
             <div className="flex items-center justify-center gap-2 mb-6">
             <button
                 type="button"
-                onClick={() => setMode("login")}
+                onClick={() => {
+                    setSuccess("");
+                    setMode("login");
+                }}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 !isSignup
                     ? "bg-[var(--color-button)] text-white"
@@ -122,7 +129,10 @@ export default function Auth() {
             </button>
             <button
                 type="button"
-                onClick={() => setMode("signup")}
+                onClick={() => {
+                    setSuccess("");
+                    setMode("signup");
+                }}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 isSignup
                     ? "bg-[var(--color-button)] text-white"
