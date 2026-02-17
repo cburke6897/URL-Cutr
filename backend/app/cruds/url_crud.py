@@ -7,14 +7,15 @@ def get_url_by_code(db: Session, code: str):
     return db.query(URL).filter(URL.code == code).first()
 
 # Create a new URL entry in the database
-def create(db: Session, original_url: str, code: str, delete_after: int):
+def create(db: Session, original_url: str, code: str, delete_after: int, created_by: int | None = None):
     if delete_after is None:
-        db_url = URL(code=code, original_url=original_url)
+        db_url = URL(code=code, original_url=original_url, created_by=created_by)
     else:
         db_url = URL(
             code=code,
             original_url=original_url,
-            delete_at=datetime.now(timezone.utc) + timedelta(minutes=delete_after)
+            delete_at=datetime.now(timezone.utc) + timedelta(minutes=delete_after),
+            created_by=created_by
         )
     db.add(db_url)
     db.commit()

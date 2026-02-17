@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, Integer, String, DateTime, BigInteger
+from sqlalchemy import Column, Integer, String, DateTime, BigInteger, ForeignKey
 from app.db.base import Base
 
 class URL(Base):
@@ -9,5 +9,6 @@ class URL(Base):
     code = Column(String, unique=True, index=True)
     original_url = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_by = Column(BigInteger, nullable=True)
     delete_at = Column(DateTime(timezone=True), nullable=True)
     clicks = Column(Integer, default=0)
