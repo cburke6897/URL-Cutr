@@ -44,7 +44,7 @@ export default function Auth() {
   
     const ensureValidPassword = (value) => {
         // Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~])[A-Za-z\d!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]{8,}$/;        
         return passwordRegex.test(value);
     }
 
@@ -94,6 +94,47 @@ export default function Auth() {
 
                     await response.json();
                     window.location.assign("/auth?success=Account created successfully. Please log in.");
+                } catch (requestError){
+                    setError("Network error")
+                }
+            }
+        } else {
+            if (!email || !password) {
+                setError("Email and password are required");
+                return;
+            } else if (!ensureValidEmail(email)) {
+                setError("Invalid email");
+                return;
+            } else {
+                try {
+                    const response = await fetch("http://localhost:8000/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email: email, password: password }),
+                    });
+
+                    if (!response.ok) {
+                        let message = "Unknown error";
+                        let errorText = null;
+
+                        try {
+                            errorText = await response.text();
+                            console.error("Error response body:", errorText);
+                        } catch (fetchError) {
+                            console.error("Failed to read error response text:", fetchError);
+                        }
+
+                        if (response.status === 401) {
+                            message = "Invalid email or password";
+                        }
+
+                        setError(message);
+                        return;
+                    }
+
+                    const data = await response.json();
+                    localStorage.setItem("token", data.token);
+                    window.location.assign("/");
                 } catch (requestError){
                     setError("Network error")
                 }
