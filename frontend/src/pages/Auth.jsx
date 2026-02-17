@@ -9,13 +9,50 @@ export default function Auth() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
   const isSignup = mode === "signup";
   const submitText = isSignup ? "Create Account" : "Log In";
 
-  const handleSubmit = () => {
-    // Placeholder action until auth endpoints exist.
-    console.log("Auth submit", { mode, email, username, password, confirmPassword });
+  const handleSubmit = async () => {
+    if (isSignup) {
+        if (!email || !username || !password || !confirmPassword) {
+          setError("One or more fields are empty");
+          return;
+        } else if (password !== confirmPassword) {
+          setError("Passwords do not match");
+          return;
+        } else {
+            try {
+                const response = await fetch("http://localhost:8000/signup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: email, username: username, password:password }),
+                });
+
+                if (!response.ok) {
+                    let message = "Unknown error";
+                    let errorText = null;
+
+                    try {
+                        errorText = await response.text();
+                        console.error("Error response body:", errorText);
+                    } catch (fetchError) {
+                        console.error("Failed to read error response text:", fetchError);
+                    }
+
+                    if (response.status === 400) {
+                        message = "Email or username already registered";
+                    }
+
+                    setError(message);
+                }
+
+            } catch (requestError){
+                setError("Network error")
+            }
+        }
+    }
   };
 
   return (
@@ -92,6 +129,13 @@ export default function Auth() {
         <div className="mt-5">
           <EnterButton onClick={handleSubmit} title={submitText} text={submitText} />
         </div>
+
+        {error && (
+          <p className="text-red-600 dark:text-red-400 mt-4 font-semibold transition-colors">
+            {error}
+          </p>
+        )}
+
       </div>
     </div>
   );
