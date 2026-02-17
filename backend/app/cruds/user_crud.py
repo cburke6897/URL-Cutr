@@ -4,7 +4,7 @@ from app.core.security import hash_password, verify_password, create_access_toke
 
 
 # Create a new user entry in the database
-def create(db: Session, username: str, email: str, password: str):
+def create(db: Session, email: str, username: str, password: str):
     hashed_password = hash_password(password)
 
     db_user = User(username=username, email=email, hashed_password=hashed_password)
