@@ -10,7 +10,7 @@ router = APIRouter()
 def login(payload: UserLogin, db: Session = Depends(get_db)):
     access_token = user_crud.login(db, payload.email, payload.password)
     if not access_token:
-        raise HTTPException(status_code=400, detail="Invalid email or password")
+        raise HTTPException(status_code=401, detail="Invalid email or password")
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post("/signup")
