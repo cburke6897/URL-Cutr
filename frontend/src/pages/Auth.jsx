@@ -11,6 +11,7 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -18,6 +19,12 @@ export default function Auth() {
   const submitText = isSignup ? "Create Account" : "Log In";
 
   useEffect(() => {
+    const param = new URLSearchParams(window.location.search);
+    const successMsg = param.get("success");
+    if (successMsg) {
+      setSuccess(successMsg);
+    }
+
     setEmail("");
     setUsername("");
     setPassword("");
@@ -27,6 +34,11 @@ export default function Auth() {
     setShowConfirmPassword(false);
   }, [mode]);
 
+  const ensureValidEmail = (value) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(value);
+  }
+
   const handleSubmit = async () => {
     if (isSignup) {
         if (!email || !username || !password || !confirmPassword) {
@@ -34,6 +46,9 @@ export default function Auth() {
           return;
         } else if (password !== confirmPassword) {
           setError("Passwords do not match");
+          return;
+        } else if (!ensureValidEmail(email)) {
+          setError("Invalid email");
           return;
         } else {
             try {
@@ -59,8 +74,11 @@ export default function Auth() {
                     }
 
                     setError(message);
+                    return;
                 }
 
+                await response.json();
+                window.location.assign("/auth?success=Account created successfully. Please log in.");
             } catch (requestError){
                 setError("Network error")
             }
@@ -168,6 +186,12 @@ export default function Auth() {
         {error && (
           <p className="text-red-600 dark:text-red-400 mt-4 font-semibold transition-colors">
             {error}
+          </p>
+        )}
+
+        {success && (
+          <p className="text-green-600 dark:text-green-400 mt-4 font-semibold transition-colors">
+            {success}
           </p>
         )}
 
