@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.cruds import user_crud
-from app.schemas.user_schema import UserCreate, UserLogin
+from app.schemas.user_schema import UserCreate, UserLogin, UserResponse
+from backend.app.core.deps import get_current_user
 
 router = APIRouter()
 
@@ -19,3 +20,7 @@ def signup(payload: UserCreate, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=400, detail="Email or username already registered")
     return {"message": "User created successfully"}
+
+@router.get("/me", response_model=UserResponse)
+def get_me(current_user = Depends(get_current_user)):
+    return current_user
