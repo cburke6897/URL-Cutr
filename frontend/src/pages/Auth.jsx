@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
 import DropdownMenu from "../components/DropdownMenu";
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 
 export default function Auth() {
   const [mode, setMode] = useState("login");
@@ -10,9 +11,21 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const isSignup = mode === "signup";
   const submitText = isSignup ? "Create Account" : "Log In";
+
+  useEffect(() => {
+    setEmail("");
+    setUsername("");
+    setPassword("");
+    setConfirmPassword("");
+    setError("");
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+  }, [mode]);
 
   const handleSubmit = async () => {
     if (isSignup) {
@@ -108,21 +121,43 @@ export default function Auth() {
             additionalClasses="w-full"
             title="Enter your email"
           />
-          <TextInput
-            placeholder="Password"
-            value={password}
-            onChange={setPassword}
-            additionalClasses="w-full"
-            title="Enter your password"
-          />
-          {isSignup && (
+          <div className="relative w-full">
             <TextInput
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={setConfirmPassword}
-              additionalClasses="w-full"
-              title="Confirm your password"
+              placeholder="Password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={setPassword}
+              additionalClasses="w-full pr-10"
+              title="Enter your password"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] hover:opacity-70"
+              title={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+            </button>
+          </div>
+          {isSignup && (
+            <div className="relative w-full">
+              <TextInput
+                placeholder="Confirm Password"
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                additionalClasses="w-full pr-10"
+                title="Confirm your password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] hover:opacity-70"
+                title={showConfirmPassword ? "Hide password" : "Show password"}
+              >
+                {showConfirmPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+              </button>
+            </div>
           )}
         </div>
 

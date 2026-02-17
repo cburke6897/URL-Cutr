@@ -1,7 +1,7 @@
-export default function Input({placeholder, value, onChange, additionalClasses = "", title = ""}) {
+export default function Input({placeholder, value, onChange, additionalClasses = "", title = "", type = "text"}) {
   return (
     <input
-      type="text"
+      type={type}
       placeholder = {placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
