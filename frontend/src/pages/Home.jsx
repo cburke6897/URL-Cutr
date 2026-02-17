@@ -10,7 +10,7 @@ export default function Home({ url, setUrl, shortUrl, error, expiration, setExpi
       <div className="min-h-[23.8rem] w-full max-w-lg bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
         
         <h1 className="text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] text-3xl font-bold mb-4 transition-colors">
-          URL Shortener
+          URL Cutr
         </h1>
 
     
@@ -26,13 +26,13 @@ export default function Home({ url, setUrl, shortUrl, error, expiration, setExpi
         </div>
 
         <div className="flex items-center gap-1 mt-3">
-          <EnterButton onClick={shorten} title="Shorten URL" />
+          <EnterButton onClick={shorten} title="Shorten URL" text = "Cut URL"/>
           <CopyButton text={shortUrl} disabled={!shortUrl} />
         </div>
 
         {shortUrl && (
           <p className="text-green-600 dark:text-green-400 mt-2 transition-colors">
-            Short URL:{" "}
+            Cut URL:{" "}
             <a
               href={shortUrl}
               className="underline text-[var(--color-link)] dark:text-[var(--color-link-dark)]"
