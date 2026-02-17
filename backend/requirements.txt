@@ -7,3 +7,5 @@ python-dotenv
 redis
 nanoid
 httpx
+python-jose[cryptography]
+passlib[bcrypt]
