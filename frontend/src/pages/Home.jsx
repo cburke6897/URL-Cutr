@@ -2,7 +2,6 @@ import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
 import CopyButton from "../components/CopyButton";
 import LinkExpirerDropdown from "../components/LinkExpirerDropdown";
-import ThemeToggle from "../components/ThemeToggle";
 import DropdownMenu from "../components/DropdownMenu";
 
 export default function Home({ url, setUrl, shortUrl, error, expiration, setExpiration, shorten, code, setCode }) {
@@ -50,8 +49,6 @@ export default function Home({ url, setUrl, shortUrl, error, expiration, setExpi
           </p>
         )}
       </div>
-
-      <ThemeToggle />
     </div>
   );
 }
