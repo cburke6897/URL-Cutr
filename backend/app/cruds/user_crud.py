@@ -15,12 +15,12 @@ def create(db: Session, username: str, email: str, password: str):
     return db_user
 
 # Retrieve a user by their email address
-def get_by_email(db: Session, email: str):
+def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
 # Authenticate a user by verifying their email and password
 def authenticate_user(db: Session, email: str, password: str):
-    user = get_by_email(db, email)
+    user = get_user_by_email(db, email)
     if not user:
         return None
     if not verify_password(password, user.hashed_password):
