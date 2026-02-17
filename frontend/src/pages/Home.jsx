@@ -3,10 +3,12 @@ import EnterButton from "../components/EnterButton";
 import CopyButton from "../components/CopyButton";
 import LinkExpirerDropdown from "../components/LinkExpirerDropdown";
 import ThemeToggle from "../components/ThemeToggle";
+import DropdownMenu from "../components/DropdownMenu";
 
 export default function Home({ url, setUrl, shortUrl, error, expiration, setExpiration, shorten, code, setCode }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] transition-colors p-4">
+      <DropdownMenu />
       <div className="min-h-[23.8rem] w-full max-w-lg bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
         
         <h1 className="text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] text-3xl font-bold mb-4 transition-colors">
