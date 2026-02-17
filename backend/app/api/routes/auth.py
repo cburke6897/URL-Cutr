@@ -14,7 +14,7 @@ def login(email: str, password: str, db: Session = Depends(get_db)):
 
 @router.post("/signup")
 def signup(email: str, username: str, password: str, db: Session = Depends(get_db)):
-    user = user_crud.create_user(db, email, username, password)
+    user = user_crud.create(db, email, username, password)
     if not user:
         raise HTTPException(status_code=400, detail="Email or username already registered")
     return {"message": "User created successfully"}
