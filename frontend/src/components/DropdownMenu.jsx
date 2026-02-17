@@ -3,10 +3,19 @@ import { useEffect, useRef, useState } from "react";
 export default function DropdownMenu() {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") || "dark"
+  );
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
+  };
+
   const menuOptions = {
     Home: () => {
       window.location.assign("/");
     },
+    "Toggle Theme": toggleTheme,
     "Sign in": () => {
       window.location.assign("/auth");
     },
@@ -31,6 +40,18 @@ export default function DropdownMenu() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   return (
     <div ref={menuRef} className="fixed top-4 right-4 z-30 flex flex-col items-end gap-2">
