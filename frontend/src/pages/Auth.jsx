@@ -133,7 +133,7 @@ export default function Auth() {
                     }
 
                     const data = await response.json();
-                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("token", data.access_token);
                     window.location.assign("/");
                 } catch (requestError){
                     setError("Network error")
