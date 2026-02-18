@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, Integer, String, DateTime, BigInteger, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, BigInteger
 from app.db.base import Base
 
 class URL(Base):
