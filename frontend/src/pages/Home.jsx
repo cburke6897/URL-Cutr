@@ -4,6 +4,7 @@ import EnterButton from "../components/EnterButton";
 import CopyButton from "../components/CopyButton";
 import LinkExpirerDropdown from "../components/LinkExpirerDropdown";
 import DropdownMenu from "../components/DropdownMenu";
+import UsernameLabel from "../components/UsernameLabel";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -11,6 +12,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [expiration, setExpiration] = useState(5);
   const [code, setCode] = useState("");
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -20,6 +22,31 @@ export default function Home() {
     }
 
     window.history.replaceState({}, "", "/");
+
+    async function init() {
+      const token = localStorage.getItem("token");
+      
+      if (token){
+        console.log("Token found:", token);
+        const response = await fetch("http://localhost:8000/me", {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log("HERE");
+        console.log("Fetch /me response:", response);
+        console.log("Response status:", response.status);
+        if (response.ok) {
+          console.log("User data fetched successfully");
+          const user = await response.json();
+          setUser(user);
+        }
+      }
+    }
+
+    init()
   }, []);
 
   const ensureHttp = (value) => {
@@ -80,6 +107,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] transition-colors p-4">
+      {user && <UsernameLabel username={user.username} />}
       <DropdownMenu />
       <div className="min-h-[23.8rem] w-full max-w-lg bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
         
