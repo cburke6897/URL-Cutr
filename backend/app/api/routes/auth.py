@@ -1,25 +1,66 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response, Request
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.cruds import user_crud
+from app.cruds.user_crud import create, authenticate_user
 from app.schemas.user_schema import UserCreate, UserLogin, UserResponse
 from app.core.deps import get_current_user
+from app.core.security import create_access_token, create_refresh_token
+from app.cruds.refresh_token_crud import save_refresh_token, refresh_token_exists
+from app.core import config
+from jose import jwt
 
 router = APIRouter()
 
 @router.post("/login")
-def login(payload: UserLogin, db: Session = Depends(get_db)):
-    access_token = user_crud.login(db, payload.email, payload.password)
-    if not access_token:
+def login(payload: UserLogin, response: Response, db: Session = Depends(get_db)):
+    user = authenticate_user(db, payload.email, payload.password)
+    if not user:
         raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    access_token = create_access_token(data={"sub": user.id})
+    refresh_token = create_refresh_token(data={"sub": user.id})
+
+    save_refresh_token(db, user.id, refresh_token)
+
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=True,
+        samesite="strict",
+        max_age=7 * 24 * 60 * 60
+    )
+
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post("/signup")
 def signup(payload: UserCreate, db: Session = Depends(get_db)):
-    user = user_crud.create(db, payload.email, payload.username, payload.password)
+    user = create(db, payload.email, payload.username, payload.password)
     if not user:
         raise HTTPException(status_code=400, detail="Email or username already registered")
     return {"message": "User created successfully"}
+
+@router.post("/refresh")
+def refresh_token(request: Request):
+    refresh_token = request.cookies.get("refresh_token")
+    if not refresh_token:
+        raise HTTPException(status_code=401, detail="Missing refresh token")
+
+    # Validate token
+    try:
+        payload = jwt.decode(refresh_token, config.REFRESH_SECRET_KEY, algorithms=[config.ALGORITHM])
+        user_id = payload.get("sub")
+    except:
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+    # Check DB to ensure token is still valid
+    if not refresh_token_exists(user_id, refresh_token):
+        raise HTTPException(status_code=401, detail="Token revoked")
+
+    # Issue new access token
+    new_access = create_access_token({"sub": user_id})
+    return {"access_token": new_access}
+
 
 @router.get("/me", response_model=UserResponse)
 def get_me(current_user = Depends(get_current_user)):

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.user_model import User
-from app.core.security import hash_password, verify_password, create_access_token
+from app.core.security import hash_password, verify_password
 
 
 # Create a new user entry in the database
@@ -30,10 +30,3 @@ def authenticate_user(db: Session, email: str, password: str):
     if not verify_password(password, user.hashed_password):
         return None
     return user
-
-# Generate an access token for a user
-def login(db: Session, email: str, password: str):
-    user = authenticate_user(db, email, password)
-    if not user:
-        return None
-    return create_access_token(data={"sub": user.id})
