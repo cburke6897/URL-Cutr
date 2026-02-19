@@ -18,7 +18,7 @@ export default function Auth() {
     const isSignup = mode === "signup";
     const submitText = isSignup ? "Create Account" : "Log In";
 
-    useEffect(() => {
+    useEffect(() => { // Clear form and messages when switching modes
         setSuccess("");
         setError("");
         setEmail("");
@@ -29,7 +29,7 @@ export default function Auth() {
         setShowConfirmPassword(false);
     }, [mode]);
 
-    useEffect(() => {
+    useEffect(() => {  // Check for success message in URL parameters (e.g., after successful signup)  
         const param = new URLSearchParams(window.location.search);
         const successMsg = param.get("success");
         if (successMsg) {
@@ -37,22 +37,22 @@ export default function Auth() {
         }
     }, []);
 
-    const ensureValidEmail = (value) => {
+    const ensureValidEmail = (value) => { // Simple email regex for basic validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(value);
     }
   
-    const ensureValidPassword = (value) => {
+    const ensureValidPassword = (value) => { // Enforce strong password:
         // Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~])[A-Za-z\d!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]{8,}$/;        
         return passwordRegex.test(value);
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async () => { // Signup and login logic with client-side validation and error handling
         setSuccess("");
         setError("");
 
-        if (isSignup) {
+        if (isSignup) { // Signup
             if (!email || !username || !password || !confirmPassword) {
             setError("One or more fields are empty");
             return;
@@ -98,7 +98,7 @@ export default function Auth() {
                     setError("Network error")
                 }
             }
-        } else {
+        } else {  // Login
             if (!email || !password) {
                 setError("Email and password are required");
                 return;
@@ -109,6 +109,7 @@ export default function Auth() {
                 try {
                     const response = await fetch("http://localhost:8000/login", {
                         method: "POST",
+                        credentials: "include",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ email: email, password: password }),
                     });
@@ -141,6 +142,54 @@ export default function Auth() {
             }
         }
     };
+
+    async function refreshAccessToken() { // Function to refresh access token using refresh token stored in HTTP-only cookie
+        const response = await fetch("http://localhost:8000/refresh", {
+            method: "POST",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            console.error("Failed to refresh token:", response.status);
+            localStorage.removeItem("token");
+            return;
+        }
+
+        const data = await response.json();
+        localStorage.setItem("token", data.access_token);
+        return data.access_token;
+    }
+
+    async function authFetch(url, options = {}) { // Wrapper around fetch to automatically include access token and handle 401 responses by attempting to refresh the token
+        const token = localStorage.getItem("token");
+
+        const response = await fetch(url, {
+            ...options,
+            headers: {
+                ...(options.headers || {}),
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+        
+        if (response.status === 401) {
+            const newToken = await refreshAccessToken();
+            if (!newToken) { return response; }
+
+            return fetch(url, {
+            ...options,
+            headers: {
+                ...(options.headers || {}),
+                Authorization: `Bearer ${newToken}`,
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            });
+        }
+
+        return response;
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] transition-colors p-4">
