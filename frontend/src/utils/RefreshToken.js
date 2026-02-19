@@ -1,4 +1,4 @@
-async function refreshAccessToken() { // Function to refresh access token using refresh token stored in HTTP-only cookie
+export async function refreshAccessToken() { // Function to refresh access token using refresh token stored in HTTP-only cookie
     const response = await fetch("http://localhost:8000/refresh", {
         method: "POST",
         credentials: "include",
@@ -15,7 +15,7 @@ async function refreshAccessToken() { // Function to refresh access token using 
     return data.access_token;
 }
 
-async function authFetch(url, options = {}) { // Wrapper around fetch to automatically include access token and handle 401 responses by attempting to refresh the token
+export async function authFetch(url, options = {}) { // Wrapper around fetch to automatically include access token and handle 401 responses by attempting to refresh the token
     const token = localStorage.getItem("token");
 
     const response = await fetch(url, {
