@@ -5,6 +5,7 @@ import CopyButton from "../components/CopyButton";
 import LinkExpirerDropdown from "../components/LinkExpirerDropdown";
 import DropdownMenu from "../components/DropdownMenu";
 import UsernameLabel from "../components/UsernameLabel";
+import { authFetch } from "../utils/RefreshToken";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -28,7 +29,7 @@ export default function Home() {
       
       if (token){
         console.log("Token found:", token);
-        const response = await fetch("http://localhost:8000/me", {
+        const response = await authFetch("http://localhost:8000/me", {
           headers: {
             "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
