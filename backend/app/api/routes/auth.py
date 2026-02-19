@@ -6,7 +6,7 @@ from app.schemas.user_schema import UserCreate, UserLogin, UserResponse
 from app.core.deps import get_current_user
 from app.core.security import create_access_token, create_refresh_token
 from app.cruds.refresh_token_crud import save_refresh_token, refresh_token_exists
-from app.core import config
+from app.core.security import REFRESH_TOKEN_SECRET_KEY, ALGORITHM
 from jose import jwt
 
 router = APIRouter()
@@ -41,20 +41,20 @@ def signup(payload: UserCreate, db: Session = Depends(get_db)):
     return {"message": "User created successfully"}
 
 @router.post("/refresh")
-def refresh_token(request: Request):
+def refresh_token(request: Request, db: Session = Depends(get_db)):
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Missing refresh token")
 
     # Validate token
     try:
-        payload = jwt.decode(refresh_token, config.REFRESH_SECRET_KEY, algorithms=[config.ALGORITHM])
+        payload = jwt.decode(refresh_token, REFRESH_TOKEN_SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("sub")
     except:
         raise HTTPException(status_code=401, detail="Invalid refresh token")
 
     # Check DB to ensure token is still valid
-    if not refresh_token_exists(user_id, refresh_token):
+    if not refresh_token_exists(db, refresh_token):
         raise HTTPException(status_code=401, detail="Token revoked")
 
     # Issue new access token
