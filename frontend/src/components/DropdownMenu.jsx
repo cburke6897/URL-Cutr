@@ -71,25 +71,25 @@ export default function DropdownMenu() {
         aria-expanded={open}
         aria-controls="hamburger-menu"
         onClick={() => setOpen((prev) => !prev)}
-        className="flex h-10 w-10 items-center justify-center rounded-lg bg-transparent hover:bg-[var(--color-surface-light)] dark:hover:bg-[var(--color-surface-dark)] transition-colors outline-none hover:outline hover:outline-2 hover:outline-[var(--color-link)] dark:hover:outline-[var(--color-link-dark)] focus:outline-none"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-transparent hover:bg-surface-light dark:hover:bg-surface-dark transition-colors outline-none hover:outline hover:outline-(--color-link) dark:hover:outline-link-dark focus:outline-none"
       >
         <span className="flex flex-col items-center justify-center gap-1">
-          <span className="h-0.5 w-5 rounded-full bg-[var(--color-text-light)] dark:bg-[var(--color-text-dark)]"></span>
-          <span className="h-0.5 w-5 rounded-full bg-[var(--color-text-light)] dark:bg-[var(--color-text-dark)]"></span>
-          <span className="h-0.5 w-5 rounded-full bg-[var(--color-text-light)] dark:bg-[var(--color-text-dark)]"></span>
+          <span className="h-0.5 w-5 rounded-full bg-text-light dark:bg-text-dark"></span>
+          <span className="h-0.5 w-5 rounded-full bg-text-light dark:bg-text-dark"></span>
+          <span className="h-0.5 w-5 rounded-full bg-text-light dark:bg-text-dark"></span>
         </span>
       </button>
 
       {open && (
         <div
           id="hamburger-menu"
-          className="w-44 rounded-lg bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] shadow-lg border border-black/10 dark:border-white/10 overflow-hidden"
+          className="w-44 rounded-lg bg-surface-light dark:bg-surface-dark shadow-lg border border-black/10 dark:border-white/10 overflow-hidden"
         >
           {Object.entries(menuOptions).map(([label, action]) => (
             <button
               key={label}
               onClick={() => handleOptionClick(action)}
-              className="w-full px-4 py-2 text-left text-sm text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] hover:bg-black/5 dark:hover:bg-white/10"
+              className="w-full px-4 py-2 text-left text-sm text-text-light dark:text-text-dark hover:bg-black/5 dark:hover:bg-white/10"
             >
               {label}
             </button>

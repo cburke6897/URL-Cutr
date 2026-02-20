@@ -144,13 +144,13 @@ export default function Auth() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] transition-colors p-4">
+        <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
         <DropdownMenu />
-        <div className="min-h-[26rem] w-full max-w-lg bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-8 pb-6 rounded-xl shadow-lg text-center transition-colors">
-            <h1 className="text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] text-3xl font-bold mb-2 transition-colors">
+        <div className="min-h-104 w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-6 rounded-xl shadow-lg text-center transition-colors">
+            <h1 className="text-text-light dark:text-text-dark text-3xl font-bold mb-2 transition-colors">
             {isSignup ? "Create your account" : "Welcome back"}
             </h1>
-            <p className="text-sm text-[var(--color-text-light)]/70 dark:text-[var(--color-text-dark)]/70 mb-6">
+            <p className="text-sm text-text-light/70 dark:text-text-dark/70 mb-6">
             {isSignup ? "Join URL Cutr in a minute." : "Log in to manage your links."}
             </p>
 
@@ -163,8 +163,8 @@ export default function Auth() {
                 }}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 !isSignup
-                    ? "bg-[var(--color-button)] text-white"
-                    : "bg-transparent text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] hover:bg-black/5 dark:hover:bg-white/10"
+                    ? "bg-button text-white"
+                    : "bg-transparent text-text-light dark:text-text-dark hover:bg-black/5 dark:hover:bg-white/10"
                 }`}
             >
                 Log In
@@ -177,8 +177,8 @@ export default function Auth() {
                 }}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 isSignup
-                    ? "bg-[var(--color-button)] text-white"
-                    : "bg-transparent text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] hover:bg-black/5 dark:hover:bg-white/10"
+                    ? "bg-button text-white"
+                    : "bg-transparent text-text-light dark:text-text-dark hover:bg-black/5 dark:hover:bg-white/10"
                 }`}
             >
                 Sign Up
@@ -214,7 +214,7 @@ export default function Auth() {
                 <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] hover:opacity-70"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-light dark:text-text-dark hover:opacity-70"
                 title={showPassword ? "Hide password" : "Show password"}
                 >
                 {showPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
@@ -233,7 +233,7 @@ export default function Auth() {
                 <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] hover:opacity-70"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-light dark:text-text-dark hover:opacity-70"
                     title={showConfirmPassword ? "Hide password" : "Show password"}
                 >
                     {showConfirmPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}

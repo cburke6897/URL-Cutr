@@ -11,13 +11,13 @@ const LINK_EXPIRATION_OPTIONS = {
 export default function LinkExpirerDropdown({ value, onChange }) {
   return (
     <div className="flex items-center gap-3">
-      <label className="text-sm font-medium text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] whitespace-nowrap">
+      <label className="text-sm font-medium text-text-light dark:text-text-dark whitespace-nowrap">
         Expire In:
       </label>
       <select
         value={value === null ? "Never expire" : Object.entries(LINK_EXPIRATION_OPTIONS).find(([_, v]) => v === value)?.[0] || "5 minutes"}
         onChange={(e) => onChange(LINK_EXPIRATION_OPTIONS[e.target.value])}
-        className="flex-1 p-3 rounded-lg bg-[var(--color-input-bar)] dark:bg-[var(--color-input-bar-dark)] text-[var(--color-input-text)] dark:text-[var(--color-input-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-button)] transition-colors"
+        className="flex-1 p-3 rounded-lg bg-input-bar dark:bg-input-bar-dark text-input-text dark:text-input-text-dark focus:outline-none focus:ring-2 focus:ring-button transition-colors"
         title="Select when the shortened URL should expire"
       >
         {Object.keys(LINK_EXPIRATION_OPTIONS).map((label) => (

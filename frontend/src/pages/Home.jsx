@@ -107,12 +107,12 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] transition-colors p-4">
+    <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
       {user && <UsernameLabel username={user.username} />}
       <DropdownMenu />
-      <div className="min-h-[23.8rem] w-full max-w-lg bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
+      <div className="min-h-[23.8rem] w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
         
-        <h1 className="text-[var(--color-text-light)] dark:text-[var(--color-text-dark)] text-3xl font-bold mb-4 transition-colors">
+        <h1 className="text-text-light dark:text-text-dark text-3xl font-bold mb-4 transition-colors">
           URL Cutr
         </h1>
 
@@ -138,7 +138,7 @@ export default function Home() {
             Cut URL:{" "}
             <a
               href={shortUrl}
-              className="underline text-[var(--color-link)] dark:text-[var(--color-link-dark)]"
+              className="underline text-link dark:text-link-dark"
             >
               {shortUrl}
             </a>
