@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function DropdownMenu() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const [theme, setTheme] = useState(
@@ -15,7 +17,7 @@ export default function DropdownMenu() {
 
   const menuOptions = {
     Home: () => {
-      window.location.assign("/");
+      navigate("/");
     },
     "Toggle Theme": toggleTheme,
   };
@@ -35,11 +37,11 @@ export default function DropdownMenu() {
       }
 
       localStorage.removeItem("token");
-      window.location.assign("/");
+      navigate("/");
     };
   } else {
     menuOptions["Sign in"] = () => {
-      window.location.assign("/auth");
+    navigate("/auth");
     };
   }
 

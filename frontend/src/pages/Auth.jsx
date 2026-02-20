@@ -2,39 +2,30 @@ import { useEffect, useState } from "react";
 import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
 import DropdownMenu from "../components/DropdownMenu";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Auth() {
+    const navigate = useNavigate();
     const [mode, setMode] = useState("login");
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [searchParams] = useSearchParams();
+    const successMsg = searchParams.get("success");
 
     const isSignup = mode === "signup";
     const submitText = isSignup ? "Create Account" : "Log In";
 
     useEffect(() => { // Clear form and messages when switching modes
-        setSuccess("");
         setError("");
         setEmail("");
         setUsername("");
         setPassword("");
         setConfirmPassword("");
-        setShowPassword(false);
-        setShowConfirmPassword(false);
     }, [mode]);
-
-    useEffect(() => {  // Check for success message in URL parameters (e.g., after successful signup)  
-        const param = new URLSearchParams(window.location.search);
-        const successMsg = param.get("success");
-        if (successMsg) {
-            setSuccess(successMsg);
-        }
-    }, []);
 
     const ensureValidEmail = (value) => { // Simple email regex for basic validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,7 +39,6 @@ export default function Auth() {
     }
 
     const handleSubmit = async () => { // Signup and login logic with client-side validation and error handling
-        setSuccess("");
         setError("");
 
         if (isSignup) { // Signup
@@ -92,7 +82,9 @@ export default function Auth() {
                     }
 
                     await response.json();
-                    window.location.assign("/auth?success=Account created successfully. Please log in.");
+                    navigate(`/auth?success=${encodeURIComponent("Account created successfully! Please log in.")}`, { replace: true });
+                    setMode("login"); // Switch to login mode after successful signup
+                    setShowSuccess(true); // Show success message
                 } catch (requestError){
                     setError("Network error")
                 }
@@ -134,7 +126,7 @@ export default function Auth() {
 
                     const data = await response.json();
                     localStorage.setItem("token", data.access_token);
-                    window.location.assign("/");
+                    navigate("/");
                 } catch (requestError){
                     setError("Network error")
                 }
@@ -157,7 +149,6 @@ export default function Auth() {
             <button
                 type="button"
                 onClick={() => {
-                    setSuccess("");
                     setMode("login");
                 }}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
@@ -171,8 +162,8 @@ export default function Auth() {
             <button
                 type="button"
                 onClick={() => {
-                    setSuccess("");
                     setMode("signup");
+                    setShowSuccess(false); // Hide success message when switching to signup mode
                 }}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 isSignup
@@ -231,9 +222,9 @@ export default function Auth() {
             </p>
             )}
 
-            {success && (
+            {successMsg && showSuccess && (
             <p className="text-green-600 dark:text-green-400 mt-4 font-semibold transition-colors">
-                {success}
+                {successMsg}
             </p>
             )}
 

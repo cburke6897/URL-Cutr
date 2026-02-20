@@ -6,8 +6,10 @@ import LinkExpirerDropdown from "../components/LinkExpirerDropdown";
 import DropdownMenu from "../components/DropdownMenu";
 import UsernameLabel from "../components/UsernameLabel";
 import { authFetch } from "../utils/RefreshToken";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate();
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
   const [error, setError] = useState("");
