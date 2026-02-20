@@ -150,7 +150,7 @@ export default function Auth() {
             {isSignup ? "Create your account" : "Welcome back"}
             </h1>
             <p className="text-sm text-text-light/70 dark:text-text-dark/70 mb-6">
-            {isSignup ? "Join URL Cutr in a minute." : "Log in to manage your links."}
+            {isSignup ? "Join URL Cutr in a minute" : "Log in to manage your links"}
             </p>
 
             <div className="flex items-center justify-center gap-2 mb-6">
