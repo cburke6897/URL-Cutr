@@ -8,14 +8,14 @@ from app.db.session import get_db
 from app.services.shortener import generate_code
 from app.services.rate_limit import rate_limit
 from app.core.tlds import is_valid_tld
-from app.core.deps import get_current_user
+from app.core.deps import get_current_user_optional
 
 
 router = APIRouter()
 
 # Endpoint to create a shortened URL
 @router.post("/shorten", response_model = URLResponse)
-def shorten_url(payload: URLCreate, request: Request, db: Session = Depends(get_db)):
+def shorten_url(payload: URLCreate, request: Request, db: Session = Depends(get_db), current_user = Depends(get_current_user_optional)):
     # Validate that the provided original URL is in a valid format and uses the HTTP or HTTPS scheme
     if (not is_valid_tld(str(payload.original_url))):
         print("Invalid TLD")
@@ -37,20 +37,14 @@ def shorten_url(payload: URLCreate, request: Request, db: Session = Depends(get_
     # Ensure the generated code is unique by checking the database and regenerating if necessary
     while url_crud.get_url_by_code(db, code):
         code = generate_code()
-
-    # Gets current user ID if the user is authenticated, otherwise sets it to None for anonymous URL creation
-    current_user_id = None
-    try:
-        current_user_id = get_current_user(db).id
-    except:
-        pass
     
     # Create a new URL entry in the database with the original URL and the generated code
     db_url = url_crud.create(db, 
         original_url = str(payload.original_url), 
         code = code, 
         delete_after = None if payload.delete_after == 0 else payload.delete_after,
-        created_by = current_user_id)
+        created_by = current_user.id if current_user else None
+        )
 
     # Construct the shortened URL using the base URL of the request and the generated code
     base_url = str(request.base_url).rstrip("/")
