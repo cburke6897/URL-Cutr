@@ -9,6 +9,8 @@ from app.cruds.refresh_token_crud import save_refresh_token, refresh_token_exist
 from app.core.security import REFRESH_TOKEN_SECRET_KEY, ALGORITHM
 from jose import jwt
 
+from backend.app.models.refresh_token_model import RefreshToken
+
 router = APIRouter()
 
 @router.post("/login")
@@ -32,6 +34,20 @@ def login(payload: UserLogin, response: Response, db: Session = Depends(get_db))
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/logout")
+def logout(request: Request, response: Response, db: Session = Depends(get_db)):
+    refresh_token = request.cookies.get("refresh_token")
+    if refresh_token:
+        try:
+            db.delete(db.query(RefreshToken).filter(RefreshToken.token == refresh_token).first())
+            db.commit()
+            response.delete_cookie(key="refresh_token")
+        finally:
+            db.close()
+
+    response.delete_cookie(key="refresh_token")
+    return {"message": "Logged out successfully"}
 
 @router.post("/signup")
 def signup(payload: UserCreate, db: Session = Depends(get_db)):
