@@ -8,8 +8,7 @@ from app.core.security import create_access_token, create_refresh_token
 from app.cruds.refresh_token_crud import save_refresh_token, refresh_token_exists
 from app.core.security import REFRESH_TOKEN_SECRET_KEY, ALGORITHM
 from jose import jwt
-
-from backend.app.models.refresh_token_model import RefreshToken
+from app.models.refresh_token_model import RefreshToken
 
 router = APIRouter()
 
@@ -38,11 +37,18 @@ def login(payload: UserLogin, response: Response, db: Session = Depends(get_db))
 @router.post("/logout")
 def logout(request: Request, response: Response, db: Session = Depends(get_db)):
     refresh_token = request.cookies.get("refresh_token")
+    print(refresh_token)
     if refresh_token:
+        print(f"Logging out user with refresh token: {refresh_token}")
         try:
             db.delete(db.query(RefreshToken).filter(RefreshToken.token == refresh_token).first())
             db.commit()
-            response.delete_cookie(key="refresh_token")
+            response.delete_cookie(
+                key="refresh_token",
+                httponly=True,
+                secure=True,
+                samesite="strict"
+                )
         finally:
             db.close()
 
