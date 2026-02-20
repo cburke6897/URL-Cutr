@@ -135,7 +135,7 @@ export default function Auth() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
+        <div className="min-h-screen flex justify-center items-start bg-bg-light dark:bg-bg-dark transition-colors p-4 pt-[7.5%]">
         <DropdownMenu />
         <div className="min-h-104 w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-6 rounded-xl shadow-lg text-center transition-colors">
             <h1 className="text-text-light dark:text-text-dark text-3xl font-bold mb-2 transition-colors">
@@ -163,7 +163,7 @@ export default function Auth() {
                 type="button"
                 onClick={() => {
                     setMode("signup");
-                    setShowSuccess(false); // Hide success message when switching to signup mode
+                    setShowSuccess(false); // Hide success message when switching to signup
                 }}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 isSignup
@@ -216,17 +216,19 @@ export default function Auth() {
             <EnterButton onClick={handleSubmit} title={submitText} text={submitText} />
             </div>
 
-            {error && (
-            <p className="text-red-600 dark:text-red-400 mt-4 font-semibold transition-colors">
-                {error}
-            </p>
-            )}
+            <div className="mt-4 min-h-6">
+                {error && (
+                <p className="text-red-600 dark:text-red-400 mt-4 font-semibold transition-colors">
+                    {error}
+                </p>
+                )}
 
-            {successMsg && showSuccess && (
-            <p className="text-green-600 dark:text-green-400 mt-4 font-semibold transition-colors">
-                {successMsg}
-            </p>
-            )}
+                {successMsg && showSuccess && (
+                <p className="text-green-600 dark:text-green-400 mt-4 font-semibold transition-colors">
+                    {successMsg}
+                </p>
+                )}
+            </div>
 
         </div>
         </div>
