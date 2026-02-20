@@ -61,10 +61,16 @@ export default function Home() {
     setError("");
     setShortUrl("");
 
+    const token = localStorage.getItem("token");
+    console.log("Token in shorten function:", token);
+
     try {
       const response = await fetch("http://localhost:8000/shorten", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json" 
+        },
         body: JSON.stringify({
           original_url: ensureHttp(url),
           delete_after: expiration,
