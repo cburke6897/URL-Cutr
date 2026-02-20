@@ -21,7 +21,18 @@ export default function DropdownMenu() {
   };
 
   if (token) {
-    menuOptions["Sign out"] = () => {
+    menuOptions["Sign out"] = async () => {
+      const response = await fetch("http://localhost:8000/logout", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.error("Failed to sign out:", response.status);
+      }
+
       localStorage.removeItem("token");
       window.location.assign("/");
     };
