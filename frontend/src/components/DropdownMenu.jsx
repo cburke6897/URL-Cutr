@@ -24,6 +24,7 @@ export default function DropdownMenu() {
     menuOptions["Sign out"] = async () => {
       const response = await fetch("http://localhost:8000/logout", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Authorization": `Bearer ${token}`,
         },
