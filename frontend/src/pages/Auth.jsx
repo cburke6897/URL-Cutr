@@ -5,7 +5,6 @@ import DropdownMenu from "../components/DropdownMenu";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Auth() {
-    const navigate = useNavigate();
     const [mode, setMode] = useState("login");
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
@@ -14,8 +13,9 @@ export default function Auth() {
     const [error, setError] = useState("");
     const [showSuccess, setShowSuccess] = useState(false);
     const [searchParams] = useSearchParams();
-    const successMsg = searchParams.get("success");
 
+    const navigate = useNavigate();
+    const successMsg = searchParams.get("success");
     const isSignup = mode === "signup";
     const submitText = isSignup ? "Create Account" : "Log In";
 
@@ -26,6 +26,17 @@ export default function Auth() {
         setPassword("");
         setConfirmPassword("");
     }, [mode]);
+
+    useEffect(() => {
+        async function init() {
+            const token = localStorage.getItem("token");
+            if (token) {
+                navigate("/dashboard");
+            }
+        }
+
+        init()
+    }, []);
 
     const ensureValidEmail = (value) => { // Simple email regex for basic validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
