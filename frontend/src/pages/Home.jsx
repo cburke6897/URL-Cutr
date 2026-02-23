@@ -95,7 +95,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
-      {user && <UsernameLabel username={user.username} />}
+      {user && <UsernameLabel username={user.username} admin = {user.admin} />}
       <DropdownMenu/>
       <div className="min-h-[23.8rem] w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
         
