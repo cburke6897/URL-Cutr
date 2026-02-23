@@ -5,11 +5,9 @@ import CopyButton from "../components/CopyButton";
 import LinkExpirerDropdown from "../components/LinkExpirerDropdown";
 import DropdownMenu from "../components/DropdownMenu";
 import UsernameLabel from "../components/UsernameLabel";
-import { authFetch } from "../utils/RefreshToken";
-import { useNavigate } from "react-router-dom";
+import { fetchCurrentUser } from "../utils/FetchCurrentUser";
 
 export default function Home() {
-  const navigate = useNavigate();
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
   const [error, setError] = useState("");
@@ -27,26 +25,7 @@ export default function Home() {
     window.history.replaceState({}, "", "/");
 
     async function init() {
-      const token = localStorage.getItem("token");
-      
-      if (token){
-        console.log("Token found:", token);
-        const response = await authFetch("http://localhost:8000/me", {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        console.log("HERE");
-        console.log("Fetch /me response:", response);
-        console.log("Response status:", response.status);
-        if (response.ok) {
-          console.log("User data fetched successfully");
-          const user = await response.json();
-          setUser(user);
-        }
-      }
+      setUser(await fetchCurrentUser());
     }
 
     init()
@@ -117,7 +96,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
       {user && <UsernameLabel username={user.username} />}
-      <DropdownMenu />
+      <DropdownMenu/>
       <div className="min-h-[23.8rem] w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
         
         <h1 className="text-text-light dark:text-text-dark text-3xl font-bold mb-4 transition-colors">
@@ -132,7 +111,7 @@ export default function Home() {
 
         <div className="flex justify-center">
           <div className="w-100">
-            <LinkExpirerDropdown value={expiration} onChange={setExpiration} /> 
+            <LinkExpirerDropdown value={expiration} onChange={setExpiration} showNever={user !== null ? user.admin : false}/> 
           </div>
         </div>
 
