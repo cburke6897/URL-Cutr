@@ -11,3 +11,7 @@ def save_refresh_token(db: Session, user_id: int, token: str) :
 
 def refresh_token_exists(db: Session, token: str) -> bool:
     return db.query(RefreshToken).filter(RefreshToken.token == token, RefreshToken.expires_at > datetime.now(timezone.utc)).first()
+
+def delete_refresh_token(db: Session, token: str):
+    db.query(RefreshToken).filter(RefreshToken.token == token).delete()
+    db.commit()
