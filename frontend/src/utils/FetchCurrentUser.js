@@ -4,7 +4,6 @@ export async function fetchCurrentUser() { // Function to fetch current user dat
     const token = localStorage.getItem("token");
       
       if (token){
-        console.log("Token found:", token);
         const response = await authFetch("http://localhost:8000/me", {
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -12,11 +11,7 @@ export async function fetchCurrentUser() { // Function to fetch current user dat
           },
         });
 
-        console.log("HERE");
-        console.log("Fetch /me response:", response);
-        console.log("Response status:", response.status);
         if (response.ok) {
-          console.log("User data fetched successfully");
           const user = await response.json();
           return user;
         }
