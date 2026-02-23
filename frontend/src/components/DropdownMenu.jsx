@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../utils/Auth";
 
 export default function DropdownMenu() {
   const navigate = useNavigate();
@@ -15,34 +16,21 @@ export default function DropdownMenu() {
     setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
   };
 
-  const menuOptions = {
-    Home: () => {
-      navigate("/");
-    },
-    "Toggle Theme": toggleTheme,
-  };
+  let menuOptions;
 
   if (token) {
-    menuOptions["Sign out"] = async () => {
-      const response = await fetch("http://localhost:8000/logout", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        console.error("Failed to sign out:", response.status);
-      }
-
-      localStorage.removeItem("token");
-      navigate("/");
-    };
+    menuOptions = {
+      Home: () => navigate("/"),
+      Dashboard: () => navigate("/dashboard"),
+      "Toggle Theme": toggleTheme,
+      "Sign out": async () => await logout(navigate, token),
+    }
   } else {
-    menuOptions["Sign in"] = () => {
-    navigate("/auth");
-    };
+    menuOptions = {
+      Home: () => navigate("/"),
+      "Toggle Theme": toggleTheme,
+      "Sign in": () => navigate("/auth"),
+    }
   }
 
   const handleOptionClick = (action) => {
