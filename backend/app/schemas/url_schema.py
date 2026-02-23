@@ -12,4 +12,4 @@ class URLResponse(BaseModel):
     short_url: HttpUrl
     clicks: int
     created_at: str
-    delete_at: str
+    delete_at: str | None = None
