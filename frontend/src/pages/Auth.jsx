@@ -3,6 +3,7 @@ import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
 import DropdownMenu from "../components/DropdownMenu";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { signup, login } from "../utils/Auth";
 
 export default function Auth() {
     const [mode, setMode] = useState("login");
@@ -38,110 +39,18 @@ export default function Auth() {
         init()
     }, []);
 
-    const ensureValidEmail = (value) => { // Simple email regex for basic validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(value);
-    }
-  
-    const ensureValidPassword = (value) => { // Enforce strong password:
-        // Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~])[A-Za-z\d!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]{8,}$/;        
-        return passwordRegex.test(value);
-    }
-
     const handleSubmit = async () => { // Signup and login logic with client-side validation and error handling
         setError("");
+        
+        const result = isSignup 
+            ? await signup({ email, username, password, confirmPassword, navigate })
+            : await login({ email, password, navigate });
 
-        if (isSignup) { // Signup
-            if (!email || !username || !password || !confirmPassword) {
-            setError("One or more fields are empty");
-            return;
-            } else if (password !== confirmPassword) {
-            setError("Passwords do not match");
-            return;
-            } else if (!ensureValidEmail(email)) {
-            setError("Invalid email");
-            return;
-            } else if (!ensureValidPassword(password)) {
-            setError("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
-            return;
-            } else {
-                try {
-                    const response = await fetch("http://localhost:8000/signup", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ email: email, username: username, password:password }),
-                    });
-
-                    if (!response.ok) {
-                        let message = "Unknown error";
-                        let errorText = null;
-
-                        try {
-                            errorText = await response.text();
-                            console.error("Error response body:", errorText);
-                        } catch (fetchError) {
-                            console.error("Failed to read error response text:", fetchError);
-                        }
-
-                        if (response.status === 400) {
-                            message = "Email or username already registered";
-                        }
-
-                        setError(message);
-                        return;
-                    }
-
-                    await response.json();
-                    navigate(`/auth?success=${encodeURIComponent("Account created successfully! Please log in.")}`, { replace: true });
-                    setMode("login"); // Switch to login mode after successful signup
-                    setShowSuccess(true); // Show success message
-                } catch (requestError){
-                    setError("Network error")
-                }
-            }
-        } else {  // Login
-            if (!email || !password) {
-                setError("Email and password are required");
-                return;
-            } else if (!ensureValidEmail(email)) {
-                setError("Invalid email");
-                return;
-            } else {
-                try {
-                    const response = await fetch("http://localhost:8000/login", {
-                        method: "POST",
-                        credentials: "include",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ email: email, password: password }),
-                    });
-
-                    if (!response.ok) {
-                        let message = "Unknown error";
-                        let errorText = null;
-
-                        try {
-                            errorText = await response.text();
-                            console.error("Error response body:", errorText);
-                        } catch (fetchError) {
-                            console.error("Failed to read error response text:", fetchError);
-                        }
-
-                        if (response.status === 401) {
-                            message = "Invalid email or password";
-                        }
-
-                        setError(message);
-                        return;
-                    }
-
-                    const data = await response.json();
-                    localStorage.setItem("token", data.access_token);
-                    navigate("/");
-                } catch (requestError){
-                    setError("Network error")
-                }
-            }
+        if (result.error) {
+            setError(result.error);
+        } else if (result.switchToLogin) {
+            setMode("login"); // Switch to login mode after successful signup
+            setShowSuccess(true); // Show success message
         }
     };
 
