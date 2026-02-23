@@ -10,4 +10,6 @@ class URLResponse(BaseModel):
     code: str
     original_url: HttpUrl
     short_url: HttpUrl
+    clicks: int
+    created_at: str
     delete_at: str
