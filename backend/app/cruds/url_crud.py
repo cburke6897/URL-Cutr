@@ -6,6 +6,10 @@ from app.models.url_model import URL
 def get_url_by_code(db: Session, code: str):
     return db.query(URL).filter(URL.code == code).first()
 
+# Retrieve all URL entries from the database for a specific user
+def get_urls_by_user(db: Session, user_id: int):
+    return db.query(URL).filter(URL.created_by == user_id).order_by(URL.created_at.desc()).all()
+
 # Create a new URL entry in the database
 def create(db: Session, original_url: str, code: str, delete_after: int, created_by: int | None = None):
     if delete_after is None:

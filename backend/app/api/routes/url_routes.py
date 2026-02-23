@@ -8,7 +8,7 @@ from app.db.session import get_db
 from app.services.shortener import generate_code
 from app.services.rate_limit import rate_limit
 from app.core.tlds import is_valid_tld
-from app.core.deps import get_current_user_optional
+from app.core.deps import get_current_user, get_current_user_optional
 
 
 router = APIRouter()
@@ -94,3 +94,23 @@ def get_stats(code: str, db: Session = Depends(get_db)):
         "clicks": url.clicks,
         "created_at": url.created_at
     }
+
+@router.get("/my-urls", response_model=list[URLResponse])
+def get_my_urls(request: Request, current_user = Depends(get_current_user), db: Session = Depends(get_db)):
+    urls = url_crud.get_urls_by_user(db, current_user.id)
+
+    base_url = str(request.base_url).rstrip("/")
+    
+    response = []
+
+    for url in urls:
+        response.append(URLResponse(
+            short_url=f"{base_url}/r/{url.code}",
+            code=url.code,
+            original_url=url.original_url,
+            clicks=url.clicks,
+            created_at=url.created_at,
+            delete_at=str(url.delete_at)
+        ))
+
+    return response
