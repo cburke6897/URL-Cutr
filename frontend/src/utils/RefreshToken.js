@@ -2,6 +2,7 @@ export async function refreshAccessToken() { // Function to refresh access token
     const response = await fetch("http://localhost:8000/refresh", {
         method: "POST",
         credentials: "include",
+        headers: { "Content-Type": "application/json" },
     });
 
     if (!response.ok) {
