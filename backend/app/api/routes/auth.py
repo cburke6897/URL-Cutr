@@ -5,10 +5,11 @@ from app.cruds.user_crud import create, authenticate_user
 from app.schemas.user_schema import UserCreate, UserLogin, UserResponse
 from app.core.deps import get_current_user
 from app.core.security import create_access_token, create_refresh_token
-from app.cruds.refresh_token_crud import save_refresh_token, refresh_token_exists
+from app.cruds.refresh_token_crud import save_refresh_token, refresh_token_exists, delete_refresh_token
 from app.core.security import REFRESH_TOKEN_SECRET_KEY, ALGORITHM
 from jose import jwt
-from app.models.refresh_token_model import RefreshToken
+
+REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60  # 7 days in seconds
 
 router = APIRouter()
 
@@ -29,7 +30,7 @@ def login(payload: UserLogin, response: Response, db: Session = Depends(get_db))
         httponly=True,
         secure=True,
         samesite="strict",
-        max_age=7 * 24 * 60 * 60
+        max_age=REFRESH_TOKEN_MAX_AGE
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
@@ -41,8 +42,7 @@ def logout(request: Request, response: Response, db: Session = Depends(get_db)):
     if refresh_token:
         print(f"Logging out user with refresh token: {refresh_token}")
         try:
-            db.delete(db.query(RefreshToken).filter(RefreshToken.token == refresh_token).first())
-            db.commit()
+            delete_refresh_token(db, refresh_token)
             response.delete_cookie(
                 key="refresh_token",
                 httponly=True,
@@ -63,7 +63,7 @@ def signup(payload: UserCreate, db: Session = Depends(get_db)):
     return {"message": "User created successfully"}
 
 @router.post("/refresh")
-def refresh_token(request: Request, db: Session = Depends(get_db)):
+def refresh_token(request: Request, response: Response, db: Session = Depends(get_db)):
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Missing refresh token")
@@ -80,8 +80,24 @@ def refresh_token(request: Request, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Token revoked")
 
     # Issue new access token
-    new_access = create_access_token({"sub": user_id})
-    return {"access_token": new_access}
+    new_access_token = create_access_token({"sub": user_id})
+
+    # Issue new refresh token and save to DB
+    new_refresh_token = create_refresh_token(data={"sub": user_id})
+    save_refresh_token(db, user_id, new_refresh_token)
+
+    response.set_cookie(
+        key="refresh_token",
+        value=new_refresh_token,
+        httponly=True,
+        secure=True,
+        samesite="strict",
+        max_age= REFRESH_TOKEN_MAX_AGE
+    )
+
+    delete_refresh_token(db, refresh_token)
+
+    return {"access_token": new_access_token, "token_type": "bearer"}
 
 
 @router.get("/me", response_model=UserResponse)
