@@ -1,4 +1,4 @@
-export async function logout(navigate, token) {
+export async function logout(navigate, location, token) {
     const response = await fetch("http://localhost:8000/logout", {
         method: "POST",
         credentials: "include",
@@ -12,5 +12,10 @@ export async function logout(navigate, token) {
     }
 
     localStorage.removeItem("token");
-    navigate("/");
+    
+    if (location.pathname == "/") {
+        navigate(0)
+    } else {
+        navigate("/");
+    }
 }

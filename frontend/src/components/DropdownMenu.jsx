@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../utils/Auth";
 
 export default function DropdownMenu() {
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const [theme, setTheme] = useState(
@@ -11,6 +10,8 @@ export default function DropdownMenu() {
   );
 
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
@@ -23,7 +24,7 @@ export default function DropdownMenu() {
       Home: () => navigate("/"),
       Dashboard: () => navigate("/dashboard"),
       "Toggle Theme": toggleTheme,
-      "Sign out": async () => await logout(navigate, token),
+      "Sign out": async () => await logout(navigate, location, token),
     }
   } else {
     menuOptions = {
