@@ -55,7 +55,9 @@ def shorten_url(payload: URLCreate, request: Request, db: Session = Depends(get_
         short_url=short_url,
         code=db_url.code,
         original_url=db_url.original_url,
-        delete_at=str(db_url.delete_at)
+        clicks=db_url.clicks,
+        created_at=str(db_url.created_at),
+        delete_at=str(db_url.delete_at) if db_url.delete_at else None
     )
 
 # Endpoint to redirect to the original URL based on the provided code
@@ -80,21 +82,6 @@ def redirect(code: str, db: Session = Depends(get_db)):
     redis_client.set(f"url:{code}", original_url)
     return RedirectResponse(original_url, status_code=302)
 
-
-# Endpoint to retrieve statistics for a shortened URL based on the provided code
-@router.get("/stats/{code}")
-def get_stats(code: str, db: Session = Depends(get_db)):
-    # Look up the URL in the database using the provided code
-    url = url_crud.get_url_by_code(db, code)
-    if not url:
-        raise HTTPException(status_code=404, detail="URL not found")
-    
-    return {
-        "original_url": url.original_url,
-        "clicks": url.clicks,
-        "created_at": url.created_at
-    }
-
 @router.get("/my-urls", response_model=list[URLResponse])
 def get_my_urls(request: Request, current_user = Depends(get_current_user), db: Session = Depends(get_db)):
     urls = url_crud.get_urls_by_user(db, current_user.id)
@@ -109,8 +96,8 @@ def get_my_urls(request: Request, current_user = Depends(get_current_user), db: 
             code=url.code,
             original_url=url.original_url,
             clicks=url.clicks,
-            created_at=url.created_at,
-            delete_at=str(url.delete_at)
+            created_at=str(url.created_at),
+            delete_at=str(url.delete_at) if url.delete_at else None
         ))
 
     return response
