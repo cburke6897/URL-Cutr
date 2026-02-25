@@ -1,4 +1,4 @@
-import { authFetch } from "../utils/RefreshToken";
+import { authFetch } from "./RefreshToken";
 
 export async function fetchCurrentUser() { // Function to fetch current user data using access token stored in localStorage, returns null if not authenticated or on error
     const token = localStorage.getItem("token");
