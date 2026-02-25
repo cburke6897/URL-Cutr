@@ -102,10 +102,11 @@ export default function Dashboard() {
                                     
                                     <div className="w-40 min-w-0">
                                         <a 
-                                            href={url.short_url || `http://localhost:8000/r/${url.code}`}
+                                            href={url.short_url}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium truncate block"
+                                            title = {url.short_url}
                                         >
                                             {url.code}
                                         </a>
@@ -124,7 +125,7 @@ export default function Dashboard() {
                                     </div>
 
                                     <div className="flex items-center gap-4 text-sm text-text-light dark:text-text-dark whitespace-nowrap">
-                                        <span className="w-20">Clicks: {url.clicks || 0}</span>
+                                        <span className="w-20">Clicks: {url.clicks}</span>
                                         <span className="w-48 text-xs text-gray-500 dark:text-gray-400">
                                             Created: {formatDate(url.created_at)}
                                         </span>
@@ -132,7 +133,7 @@ export default function Dashboard() {
                                             Expires: {formatDate(url.delete_at)}
                                         </span>
                                         
-                                        <CopyButton text={url.short_url || `http://localhost:8000/r/${url.code}`} />
+                                        <CopyButton text={url.short_url} />
                                     </div>
                                 </div>
                             ))}
