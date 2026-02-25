@@ -78,6 +78,9 @@ def refresh_token(request: Request, response: Response, db: Session = Depends(ge
     # Check DB to ensure token is still valid
     if not refresh_token_exists(db, refresh_token):
         raise HTTPException(status_code=401, detail="Token revoked")
+    
+    # Revoke old refresh token
+    delete_refresh_token(db, refresh_token)
 
     # Issue new access token
     new_access_token = create_access_token({"sub": user_id})
@@ -94,8 +97,6 @@ def refresh_token(request: Request, response: Response, db: Session = Depends(ge
         samesite="strict",
         max_age= REFRESH_TOKEN_MAX_AGE
     )
-
-    delete_refresh_token(db, refresh_token)
 
     return {"access_token": new_access_token, "token_type": "bearer"}
 
