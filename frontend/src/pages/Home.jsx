@@ -125,6 +125,8 @@ export default function Home() {
             Cut URL:{" "}
             <a
               href={shortUrl}
+              rel="noopener noreferrer"
+              target="_blank"
               className="underline text-link dark:text-link-dark"
             >
               {shortUrl}
