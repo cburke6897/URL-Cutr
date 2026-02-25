@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import DropdownMenu from "../components/DropdownMenu";
 import UsernameLabel from "../components/UsernameLabel";
 import CopyButton from "../components/CopyButton";
-import { fetchCurrentUser } from "../utils/FetchCurrentUser";
+import { fetchCurrentUser } from "../utils/User";
 import { authFetch } from "../utils/RefreshToken";
+import DeleteButton from "../components/DeleteButton";
+import { deleteUrl } from "../utils/Url";
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -100,7 +102,7 @@ export default function Dashboard() {
                                         {index + 1}.
                                     </div>
                                     
-                                    <div className="w-40 min-w-0">
+                                    <div className="w-30 min-w-0">
                                         <a 
                                             href={url.short_url}
                                             target="_blank"
@@ -134,6 +136,7 @@ export default function Dashboard() {
                                         </span>
                                         
                                         <CopyButton text={url.short_url} />
+                                        <DeleteButton onClick={() => deleteUrl(navigate, url.code)} title="Delete URL" />
                                     </div>
                                 </div>
                             ))}

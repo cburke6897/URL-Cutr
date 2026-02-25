@@ -25,3 +25,12 @@ def create(db: Session, original_url: str, code: str, delete_after: int, created
     db.commit()
     db.refresh(db_url)
     return db_url
+
+# Delete a URL entry from the database based on the provided code
+def delete(db: Session, code: str):
+    url = db.query(URL).filter(URL.code == code).first()
+    if url:
+        db.delete(url)
+        db.commit()
+        return True
+    return False

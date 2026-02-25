@@ -101,3 +101,18 @@ def get_my_urls(request: Request, current_user = Depends(get_current_user), db: 
         ))
 
     return response
+
+@router.post("/delete/{code}")
+def delete_url(code: str, current_user = Depends(get_current_user), db: Session = Depends(get_db)):
+    url = url_crud.get_url_by_code(db, code)
+    if not url:
+        raise HTTPException(status_code=404, detail="URL not found")
+    
+    if url.created_by != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this URL")
+    
+    success = url_crud.delete(db, code)
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to delete URL")
+    
+    return {"message": "URL deleted successfully"}

@@ -1,3 +1,5 @@
+import { authFetch } from "./RefreshToken";
+
 const ensureHttp = (value) => {
   if (!/^https?:\/\//i.test(value)) {
     return "http://" + value;
@@ -9,7 +11,7 @@ export const shortenUrl = async (url, expiration, code) => {
   const token = localStorage.getItem("token");
   console.log("Token in shorten function:", token);
 
-  const response = await fetch("http://localhost:8000/shorten", {
+  const response = await authFetch("http://localhost:8000/shorten", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -51,3 +53,21 @@ export const shortenUrl = async (url, expiration, code) => {
   const data = await response.json();
   return data.short_url;
 };
+
+export const deleteUrl = async (navigate, code) => {
+   const token = localStorage.getItem("token");
+   const response = await authFetch(`http://localhost:8000/delete/${code}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to delete URL");
+    }
+
+    window.alert("URL deleted successfully");
+
+    navigate(0); // Refresh the page to update the URL list
+}
