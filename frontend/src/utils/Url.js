@@ -67,7 +67,5 @@ export const deleteUrl = async (navigate, code) => {
       throw new Error("Failed to delete URL");
     }
 
-    window.alert("URL deleted successfully");
-
     navigate(0); // Refresh the page to update the URL list
 }
