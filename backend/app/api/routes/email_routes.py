@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db.session import get_db
 from app.cruds.user_crud import get_user_by_email
-from app.schemas.reset_schema import ResetPasswordEmail, VerifyTokenRequest, ResetPassword
-from app.cruds.reset_token_crud import save_reset_token, verify_and_get_reset_token, delete_reset_token
+from app.schemas.reset_schema import ResetPasswordEmail
+from app.cruds.reset_token_crud import save_reset_token
+from app.core.security import hash_reset_token
 
 router = APIRouter()
 
@@ -22,11 +23,14 @@ def send_reset_password_email(payload: ResetPasswordEmail, db: Session = Depends
         # Generate cryptographically secure random token
         reset_token = secrets.token_urlsafe(32)
         
-        # Save token to database (will be hashed by save_reset_token function)
-        save_reset_token(db, user.email, reset_token)
+        # Hash the token for secure storage
+        hashed_token = hash_reset_token(reset_token)
+        
+        # Save hashed token to database (expires in 1 hour)
+        save_reset_token(db, user.id, hashed_token)
         
         # Construct reset link with plain token
-        reset_link = f"{settings.frontend_url}/change-password?token={reset_token}"
+        reset_link = f"{settings.frontend_url}/reset-password?token={reset_token}"
         
         html_content = f"""
         <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px; font-family: Arial, sans-serif;">
@@ -70,45 +74,3 @@ def send_reset_password_email(payload: ResetPasswordEmail, db: Session = Depends
     
     # Always return same message (security: prevent user enumeration)
     return {"message": "If an account exists with this email, a password reset link has been sent"}
-
-
-@router.post("/verify-reset-token")
-def verify_reset_token_route(payload: VerifyTokenRequest, db: Session = Depends(get_db)):
-    # Verify if a reset token is valid and not expired
-    token_record = verify_and_get_reset_token(db, payload.token)
-    
-    if not token_record:
-        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
-    
-    # Get user by email to return user_id
-    user = get_user_by_email(db, token_record.user_email)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    return {
-        "valid": True,
-    }
-
-
-@router.post("/reset-password")
-def reset_password(payload: ResetPassword, db: Session = Depends(get_db)):
-    # Verify the token
-    token_record = verify_and_get_reset_token(db, payload.token)
-    
-    if not token_record:
-        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
-    
-    # Get the user by email from token record
-    user = get_user_by_email(db, token_record.user_email)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    # Update the password
-    user.set_password(payload.new_password)
-    
-    # Delete the used token
-    delete_reset_token(db, token_record.id)
-    
-    db.commit()
-    
-    return {"message": "Password reset successfully"}
