@@ -5,3 +5,7 @@ class ResetPasswordEmail(BaseModel):
 
 class VerifyTokenRequest(BaseModel):
     token: str
+
+class ResetPassword(BaseModel):
+    token: str
+    new_password: str
