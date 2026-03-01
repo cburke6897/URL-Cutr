@@ -6,6 +6,9 @@ class Settings(BaseSettings):
     redis_url: str
     access_token_secret_key: str
     refresh_token_secret_key: str
+    resend_api_key: str
+    support_email: str
+    frontend_url: str = "http://localhost:5173"  # Default to localhost for development
 
     class Config:
         env_file = ".env"
