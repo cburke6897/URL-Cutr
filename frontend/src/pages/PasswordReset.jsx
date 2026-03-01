@@ -1,12 +1,14 @@
 import { useState } from "react";
 import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
+import DropdownMenu from "../components/DropdownMenu";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
 
   return (
     <div className="min-h-screen flex justify-center items-start bg-bg-light dark:bg-bg-dark transition-colors p-4 pt-[7.5%]">
+      <DropdownMenu />
       <div className="w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 rounded-xl shadow-lg text-center transition-colors">
         <label className="block text-text-light dark:text-text-dark text-3xl font-bold mb-6 transition-colors">
           Password Reset
