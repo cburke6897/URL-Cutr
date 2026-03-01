@@ -6,8 +6,9 @@ import asyncio
 async def delete_expired_urls_periodically(period_seconds: int = 60):
     while True:
         delete_expired_urls()
-        delete_expired_tokens()
-        # Wait for 1 hour before checking again
+        delete_expired_refresh_tokens()
+        delete_expired_reset_tokens
+        # Wait for 1 minute before checking again
         await asyncio.sleep(period_seconds)
 
 def delete_expired_urls():
@@ -22,13 +23,25 @@ def delete_expired_urls():
     finally:
         db.close()
 
-def delete_expired_tokens():
+def delete_expired_refresh_tokens():
     db = SessionLocal()
     try:
         from app.models.refresh_token_model import RefreshToken
         expired_tokens = db.query(RefreshToken).filter(RefreshToken.expires_at < datetime.now(timezone.utc)).all()
         for token in expired_tokens:
             print(f"Deleting expired refresh token for user_id: {token.user_id}")
+            db.delete(token)
+        db.commit()
+    finally:
+        db.close()
+
+def delete_expired_reset_tokens():
+    db = SessionLocal()
+    try:
+        from app.models.reset_token_model import ResetToken
+        expired_tokens = db.query(ResetToken).filter(ResetToken.expires_at < datetime.now(timezone.utc)).all()
+        for token in expired_tokens:
+            print(f"Deleting expired reset token for user_id: {token.user_id}")
             db.delete(token)
         db.commit()
     finally:
