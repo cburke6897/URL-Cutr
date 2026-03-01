@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
+import { sendDeleteAccountEmail } from "../utils/DeleteAccount";
 
 export default function UsernameLabel({ username = "", admin = false }) {
 	const [open, setOpen] = useState(false);
@@ -10,7 +11,7 @@ export default function UsernameLabel({ username = "", admin = false }) {
 	const menuOptions = {
 		"Change Username": () => console.log("Change Username clicked"),
 		"Reset Password": () => navigate("/reset-password"),
-		"Delete Account": () => console.log("Delete Account clicked"),
+		"Delete Account": async () => await sendDeleteAccountEmail(),
 	};
 
 	const handleOptionClick = (action) => {
