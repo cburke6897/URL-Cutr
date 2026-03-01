@@ -22,15 +22,15 @@ export default function AlertModal({ message, isError = false, onClose }) {
 				ref={modalRef}
 				className={`rounded-lg shadow-lg px-6 py-4 text-center transition-colors ${
 					isError
-						? "bg-red-100 dark:bg-red-900/30 border border-red-500"
-						: "bg-green-100 dark:bg-green-900/30 border border-green-500"
+						? "bg-error-bg dark:bg-error-bg-dark border border-error-border"
+						: "bg-success-bg dark:bg-success-bg-dark border border-success-border"
 				}`}
 			>
 				<p
 					className={`font-semibold transition-colors ${
 						isError
-							? "text-red-800 dark:text-red-200"
-							: "text-green-800 dark:text-green-200"
+							? "text-error-strong dark:text-error-strong-dark"
+							: "text-success-strong dark:text-success-strong-dark"
 					}`}
 				>
 					{message}

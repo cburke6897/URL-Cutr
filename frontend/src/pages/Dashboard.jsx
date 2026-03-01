@@ -102,7 +102,7 @@ export default function Dashboard() {
                     )}
 
                     {error && (
-                        <p className="text-red-500 mb-4">{error}</p>
+                        <p className="text-error mb-4">{error}</p>
                     )}
 
                     {!loading && urls.length === 0 && (
@@ -116,7 +116,7 @@ export default function Dashboard() {
                             {currentUrls.map((url, index) => (
                                 <div 
                                     key={url.id || url.code} 
-                                    className="bg-bg-light dark:bg-bg-dark rounded-lg px-4 py-2 border border-gray-300 dark:border-gray-600 transition-colors flex items-center gap-4"
+                                    className="bg-bg-light dark:bg-bg-dark rounded-lg px-4 py-2 border border-border dark:border-border-dark transition-colors flex items-center gap-4"
                                 >
                                     <div className="w-8 text-text-light dark:text-text-dark font-semibold">
                                         {startIndex + index + 1}.
@@ -127,7 +127,7 @@ export default function Dashboard() {
                                             href={url.short_url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium truncate block"
+                                            className="text-link hover:text-link dark:text-link-dark dark:hover:text-link font-medium truncate block"
                                             title = {url.short_url}
                                         >
                                             {url.code}
@@ -139,7 +139,7 @@ export default function Dashboard() {
                                             href={url.original_url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-gray-600 dark:text-gray-400 text-sm truncate block hover:text-blue-500 dark:hover:text-blue-400"
+                                            className="text-text-muted dark:text-text-muted-dark text-sm truncate block hover:text-link dark:hover:text-link-dark"
                                             title={url.original_url}
                                         >
                                             {url.original_url}
@@ -148,10 +148,10 @@ export default function Dashboard() {
 
                                     <div className="flex items-center gap-4 text-sm text-text-light dark:text-text-dark whitespace-nowrap">
                                         <span className="w-20">Clicks: {url.clicks}</span>
-                                        <span className="w-48 text-xs text-gray-500 dark:text-gray-400">
+                                        <span className="w-48 text-xs text-text-muted dark:text-text-muted-dark">
                                             Created: {formatDate(url.created_at)}
                                         </span>
-                                        <span className="w-48 text-xs text-gray-500 dark:text-gray-400">
+                                        <span className="w-48 text-xs text-text-muted dark:text-text-muted-dark">
                                             Expires: {formatDate(url.delete_at)}
                                         </span>
                                         
@@ -167,7 +167,7 @@ export default function Dashboard() {
                                         type="button"
                                         onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                                         disabled={currentPage === 1}
-                                        className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 text-text-light dark:text-text-dark disabled:opacity-50 disabled:cursor-not-allowed hover:bg-black/5 dark:hover:bg-white/10"
+                                        className="px-3 py-1 rounded-md border border-border dark:border-border-dark text-text-light dark:text-text-dark disabled:opacity-50 disabled:cursor-not-allowed hover:bg-hover-overlay dark:hover:bg-hover-overlay-dark"
                                     >
                                         Previous
                                     </button>
@@ -180,7 +180,7 @@ export default function Dashboard() {
                                         type="button"
                                         onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                                         disabled={currentPage === totalPages}
-                                        className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 text-text-light dark:text-text-dark disabled:opacity-50 disabled:cursor-not-allowed hover:bg-black/5 dark:hover:bg-white/10"
+                                        className="px-3 py-1 rounded-md border border-border dark:border-border-dark text-text-light dark:text-text-dark disabled:opacity-50 disabled:cursor-not-allowed hover:bg-hover-overlay dark:hover:bg-hover-overlay-dark"
                                     >
                                         Next
                                     </button>

@@ -1,36 +1,84 @@
 @import "tailwindcss";
 
 @theme {
+  /* Background colors */
   --color-bg-light: oklch(92% 0.12 270);
   --color-bg-dark: oklch(4% 0.13 270);
 
+  /* Surface colors */
   --color-surface-light: oklch(96% 0.08 270);
   --color-surface-dark: oklch(8% 0.14 270);
 
+  /* Text colors */
   --color-text-light: oklch(6% 0 0);
   --color-text-dark: oklch(98% 0 0);
 
+  /* Primary colors */
   --color-primary: oklch(60% 0.40 266);
   --color-primary-dark: oklch(28% 0.43 270);
 
+  /* Button colors */
   --color-button: oklch(45% 0.08 266);
   --color-button-hover: oklch(40% 0.10 266);
   --color-button-dark: oklch(18% 0.12 270);
   --color-button-hover-dark: oklch(14% 0.14 270);
 
+  /* Shorten button colors */
   --color-shorten-button: oklch(60% 0.25 266);
   --color-shorten-button-hover: oklch(55% 0.27 266);
   --color-shorten-button-dark: oklch(20% 0.40 270);
   --color-shorten-button-hover-dark: oklch(24% 0.46 270);
 
+  /* Input bar colors */
   --color-input-bar: oklch(94% 0.20 270);
   --color-input-bar-dark: oklch(8% 0.12 270);
 
+  /* Input text colors */
   --color-input-text: oklch(15% 0 0);
   --color-input-text-dark: oklch(90% 0 0);
 
+  /* Link colors */
   --color-link: oklch(60% 0.40 266);
   --color-link-dark: oklch(28% 0.38 270);
+
+  /* Error colors */
+  --color-error: oklch(55% 0.22 25);
+  --color-error-dark: oklch(75% 0.18 25);
+  --color-error-strong: oklch(35% 0.20 25);
+  --color-error-strong-dark: oklch(85% 0.15 25);
+  --color-error-bg: oklch(95% 0.08 25);
+  --color-error-bg-dark: oklch(15% 0.12 25 / 0.3);
+  --color-error-border: oklch(55% 0.22 25);
+
+  /* Success colors */
+  --color-success: oklch(50% 0.18 150);
+  --color-success-dark: oklch(70% 0.15 150);
+  --color-success-strong: oklch(30% 0.16 150);
+  --color-success-strong-dark: oklch(80% 0.13 150);
+  --color-success-bg: oklch(95% 0.08 150);
+  --color-success-bg-dark: oklch(15% 0.12 150 / 0.3);
+  --color-success-border: oklch(50% 0.18 150);
+
+  /* Border colors */
+  --color-border: oklch(85% 0.02 270);
+  --color-border-dark: oklch(30% 0.04 270);
+  --color-border-subtle: oklch(6% 0 0 / 0.1);
+  --color-border-subtle-dark: oklch(98% 0 0 / 0.1);
+
+  /* Hover overlay colors */
+  --color-hover-overlay: oklch(6% 0 0 / 0.05);
+  --color-hover-overlay-dark: oklch(98% 0 0 / 0.1);
+
+  /* Placeholder colors */
+  --color-placeholder: oklch(50% 0.02 270);
+  --color-placeholder-dark: oklch(65% 0.02 270);
+
+  /* Muted text colors */
+  --color-text-muted: oklch(45% 0.02 270);
+  --color-text-muted-dark: oklch(65% 0.02 270);
+
+  /* Admin badge */
+  --color-admin-badge: oklch(55% 0.22 25);
 }
 
 @custom-variant dark (&:is(.dark, .dark *));

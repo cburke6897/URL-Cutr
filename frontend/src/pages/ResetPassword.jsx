@@ -68,13 +68,13 @@ export default function ResetPassword() {
 
         <div className="mt-4 h-12 flex items-center justify-center">
           {message && (
-            <p className="text-green-600 dark:text-green-400 font-semibold transition-colors">
+            <p className="text-success dark:text-success-dark font-semibold transition-colors">
               {message}
             </p>
           )}
 
           {!message && displayError && (
-            <p className="text-red-600 dark:text-red-400 font-semibold transition-colors">
+            <p className="text-error dark:text-error-dark font-semibold transition-colors">
               {displayError}
             </p>
           )}

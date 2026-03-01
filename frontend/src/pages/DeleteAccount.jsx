@@ -99,7 +99,7 @@ export default function DeleteAccount() {
                 </div>
 
                 {error && (
-                    <p className="text-red-600 dark:text-red-400 mt-4 font-semibold transition-colors">
+                    <p className="text-error dark:text-error-dark mt-4 font-semibold transition-colors">
                         {error}
                     </p>
                 )}

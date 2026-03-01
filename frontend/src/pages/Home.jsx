@@ -82,7 +82,7 @@ export default function Home() {
         </div>
 
         {shortUrl && (
-          <p className="text-green-600 dark:text-green-400 mt-2 transition-colors">
+          <p className="text-success dark:text-success-dark mt-2 transition-colors">
             Cut URL:{" "}
             <a
               href={shortUrl}
@@ -96,13 +96,13 @@ export default function Home() {
         )}
 
         {success && (
-          <p className="text-green-600 dark:text-green-400 mt-4 font-semibold transition-colors">
+          <p className="text-success dark:text-success-dark mt-4 font-semibold transition-colors">
             {success}
           </p>
         )}
 
         {error && (
-          <p className="text-red-600 dark:text-red-400 mt-4 font-semibold transition-colors">
+          <p className="text-error dark:text-error-dark mt-4 font-semibold transition-colors">
             {error}
           </p>
         )}

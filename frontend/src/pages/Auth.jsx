@@ -74,7 +74,7 @@ export default function Auth() {
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 !isSignup
                     ? "bg-button text-white"
-                    : "bg-transparent text-text-light dark:text-text-dark hover:bg-black/5 dark:hover:bg-white/10"
+                    : "bg-transparent text-text-light dark:text-text-dark hover:bg-hover-overlay dark:hover:bg-hover-overlay-dark"
                 }`}
             >
                 Log In
@@ -88,7 +88,7 @@ export default function Auth() {
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 isSignup
                     ? "bg-button text-white"
-                    : "bg-transparent text-text-light dark:text-text-dark hover:bg-black/5 dark:hover:bg-white/10"
+                    : "bg-transparent text-text-light dark:text-text-dark hover:bg-hover-overlay dark:hover:bg-hover-overlay-dark"
                 }`}
             >
                 Sign Up
@@ -148,13 +148,13 @@ export default function Auth() {
 
             <div className="mt-4 min-h-6">
                 {error && (
-                <p className="text-red-600 dark:text-red-400 mt-4 font-semibold transition-colors">
+                <p className="text-error dark:text-error-dark mt-4 font-semibold transition-colors">
                     {error}
                 </p>
                 )}
 
                 {successMsg && showSuccess && (
-                <p className="text-green-600 dark:text-green-400 mt-4 font-semibold transition-colors">
+                <p className="text-success dark:text-success-dark mt-4 font-semibold transition-colors">
                     {successMsg}
                 </p>
                 )}
