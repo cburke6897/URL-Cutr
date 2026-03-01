@@ -27,7 +27,7 @@ def send_reset_password_email(payload: ResetPasswordEmail, db: Session = Depends
         hashed_token = hash_reset_token(reset_token)
         
         # Save hashed token to database (expires in 1 hour)
-        save_reset_token(db, user.id, hashed_token)
+        save_reset_token(db, user.email, hashed_token)
         
         # Construct reset link with plain token
         reset_link = f"{settings.frontend_url}/change-password?token={reset_token}"

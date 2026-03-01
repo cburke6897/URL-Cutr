@@ -5,10 +5,10 @@ from app.core.security import hash_reset_token, verify_reset_token
 
 EXPIRE_MINUTES = 15
 
-def save_reset_token(db: Session, user_id: int, token: str):
+def save_reset_token(db: Session, user_email: str, token: str):
     hashed_token = hash_reset_token(token)
 
-    reset_token = ResetToken(user_id=user_id, token=hashed_token, expires_at=datetime.now(timezone.utc) + timedelta(minutes=EXPIRE_MINUTES))
+    reset_token = ResetToken(user_email=user_email, token=hashed_token, expires_at=datetime.now(timezone.utc) + timedelta(minutes=EXPIRE_MINUTES))
     db.add(reset_token)
     db.commit()
     db.refresh(reset_token)
