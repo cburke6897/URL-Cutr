@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 
 export default function UsernameLabel({ username = "", admin = false }) {
