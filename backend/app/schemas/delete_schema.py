@@ -5,3 +5,8 @@ class DeleteAccountEmail(BaseModel):
 
 class VerifyTokenRequest(BaseModel):
     token: str
+
+class DeleteAccountRequest(BaseModel):
+    token: str
+    email: EmailStr
+    password: str
