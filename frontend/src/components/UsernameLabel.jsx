@@ -2,16 +2,30 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { sendDeleteAccountEmail } from "../utils/DeleteAccount";
+import AlertModal from "./AlertModal";
 
 export default function UsernameLabel({ username = "", admin = false }) {
 	const [open, setOpen] = useState(false);
+	const [alertMessage, setAlertMessage] = useState("");
+	const [isAlertError, setIsAlertError] = useState(false);
 	const menuRef = useRef(null);
 	const navigate = useNavigate();
+
+	const handleDeleteAccount = async () => {
+		const result = await sendDeleteAccountEmail();
+		if (result.error) {
+			setAlertMessage(result.error);
+			setIsAlertError(true);
+		} else if (result.message) {
+			setAlertMessage(result.message);
+			setIsAlertError(false);
+		}
+	};
 
 	const menuOptions = {
 		"Change Username": () => console.log("Change Username clicked"),
 		"Reset Password": () => navigate("/reset-password"),
-		"Delete Account": async () => await sendDeleteAccountEmail(),
+		"Delete Account": handleDeleteAccount,
 	};
 
 	const handleOptionClick = (action) => {
@@ -35,7 +49,13 @@ export default function UsernameLabel({ username = "", admin = false }) {
 	}, [open]);
 
 	return (
-		<div ref={menuRef} className="fixed top-4 left-4 z-20 flex items-center gap-2">
+		<>
+			<AlertModal 
+				message={alertMessage} 
+				isError={isAlertError} 
+				onClose={() => setAlertMessage("")} 
+			/>
+			<div ref={menuRef} className="fixed top-4 left-4 z-20 flex items-center gap-2">
 			<div className="rounded-lg bg-surface-light dark:bg-surface-dark px-3 py-2 text-sm font-semibold text-text-light dark:text-text-dark shadow-md transition-colors flex items-center gap-2">
 				<button 
 					onClick={() => setOpen((prev) => !prev)}
@@ -61,6 +81,7 @@ export default function UsernameLabel({ username = "", admin = false }) {
 					))}
 				</div>
 			)}
-		</div>
+			</div>
+		</>
 	);
 }
