@@ -3,7 +3,7 @@ import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
 import DropdownMenu from "../components/DropdownMenu";
 
-export default function ForgotPassword() {
+export default function ResetPassword() {
   const [email, setEmail] = useState("");
 
   return (
