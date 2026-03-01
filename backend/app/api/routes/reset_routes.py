@@ -35,16 +35,17 @@ def send_reset_password_email(payload: ResetPasswordEmail, db: Session = Depends
                     <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                         <tr>
                             <td style="padding: 40px 30px; text-align: center;">
-                                <h1 style="color: #333333; margin: 0 0 20px 0; font-size: 24px;">Password Reset Request</h1>
+                                <h1 style="color: #007bff; margin: 0 0 10px 0; font-size: 28px; font-weight: bold;">URL Cutr</h1>
+                                <h2 style="color: #333333; margin: 0 0 20px 0; font-size: 22px; font-weight: normal;">Password Reset Request</h2>
                                 <p style="color: #666666; line-height: 1.6; margin: 0 0 30px 0; font-size: 16px;">
-                                    We received a request to reset your password. Click the button below to create a new password.
+                                    We received a request to reset your password for your URL Cutr account. Click the button below to create a new password.
                                 </p>
                                 <a href="{reset_link}" style="display: inline-block; padding: 14px 40px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">Reset Password</a>
                                 <p style="color: #999999; line-height: 1.6; margin: 30px 0 0 0; font-size: 14px;">
                                     If you didn't request this, you can safely ignore this email.
                                 </p>
                                 <p style="color: #999999; line-height: 1.6; margin: 10px 0 0 0; font-size: 12px;">
-                                    This link will expire in 1 hour.
+                                    This link will expire in 15 minutes.
                                 </p>
                             </td>
                         </tr>
@@ -55,9 +56,9 @@ def send_reset_password_email(payload: ResetPasswordEmail, db: Session = Depends
         """
         
         params: resend.Emails.SendParams = {
-            "from": f"Support <{settings.support_email}>",
+            "from": f"URL Cutr <{settings.support_email}>",
             "to": [payload.email],
-            "subject": "Password Reset Request",
+            "subject": "URL Cutr - Password Reset Request",
             "html": html_content
         }
         
