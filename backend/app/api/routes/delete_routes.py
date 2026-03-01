@@ -4,10 +4,10 @@ from requests import Session
 from app.core.config import settings
 from app.db.session import get_db
 import resend
-from app.cruds.user_crud import get_user_by_email
-from app.schemas.delete_schema import DeleteAccountEmail, VerifyTokenRequest
+from app.cruds.user_crud import authenticate_user, get_user_by_email
+from app.schemas.delete_schema import DeleteAccountEmail, VerifyTokenRequest, DeleteAccountRequest
 from app.cruds.delete_token_crud import delete_delete_token, save_delete_token, verify_and_get_delete_token
-from app.cruds.url_crud import get_urls_by_user, delete
+from app.cruds.url_crud import get_urls_by_user
 from app.models.reset_token_model import ResetToken
 from app.models.refresh_token_model import RefreshToken
 
@@ -93,7 +93,7 @@ def verify_delete_token_route(payload: VerifyTokenRequest, db: Session = Depends
     }
 
 @router.post("/delete-account")
-def delete_account(payload: VerifyTokenRequest, db: Session = Depends(get_db)):
+def delete_account(payload: DeleteAccountRequest, db: Session = Depends(get_db)):
     # Verify if a delete token is valid and not expired
     token_record = verify_and_get_delete_token(db, payload.token)
     
@@ -101,9 +101,9 @@ def delete_account(payload: VerifyTokenRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Invalid or expired delete token")
     
     # Get user by email
-    user = get_user_by_email(db, token_record.user_email)
+    user = authenticate_user(db, payload.email, payload.password)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Invalid email or password")
     
     # Delete all URLs associated with the user
     user_urls = get_urls_by_user(db, user.id)
