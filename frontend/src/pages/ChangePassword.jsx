@@ -7,7 +7,6 @@ import { changePasswordWithToken } from "../utils/ResetPassword";
 import { logout } from "../utils/Auth";
 
 export default function ChangePassword() {
-    const [userId, setUserId] = useState(null);
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
@@ -40,8 +39,7 @@ export default function ChangePassword() {
                     return;
                 }
 
-                const data = await response.json();
-                setUserId(data.user_id);
+                await response.json();
                 
                 // Logout user from any existing sessions
                 const currentToken = localStorage.getItem("token");
