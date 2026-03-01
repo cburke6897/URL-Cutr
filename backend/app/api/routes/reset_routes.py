@@ -81,7 +81,7 @@ def verify_reset_token_route(payload: VerifyTokenRequest, db: Session = Depends(
     if not token_record:
         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
     
-    # Get user by email to return user_id
+    # Get user by email
     user = get_user_by_email(db, token_record.user_email)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
