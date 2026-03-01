@@ -6,7 +6,8 @@ from app.schemas.user_schema import UserCreate, UserLogin, UserResponse
 from app.core.deps import get_current_user
 from app.core.security import create_access_token, create_refresh_token
 from app.cruds.refresh_token_crud import save_refresh_token, refresh_token_exists, delete_refresh_token
-from app.core.security import REFRESH_TOKEN_SECRET_KEY, ALGORITHM
+from app.core.config import settings
+from app.core.security import ALGORITHM
 from jose import jwt
 
 REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60  # 7 days in seconds
@@ -70,7 +71,7 @@ def refresh_token(request: Request, response: Response, db: Session = Depends(ge
 
     # Validate token
     try:
-        payload = jwt.decode(refresh_token, REFRESH_TOKEN_SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(refresh_token, settings.refresh_token_secret_key, algorithms=[ALGORITHM])
         user_id = payload.get("sub")
     except:
         raise HTTPException(status_code=401, detail="Invalid refresh token")
