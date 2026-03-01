@@ -30,7 +30,7 @@ def send_reset_password_email(payload: ResetPasswordEmail, db: Session = Depends
         save_reset_token(db, user.id, hashed_token)
         
         # Construct reset link with plain token
-        reset_link = f"{settings.frontend_url}/reset-password?token={reset_token}"
+        reset_link = f"{settings.frontend_url}/change-password?token={reset_token}"
         
         html_content = f"""
         <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px; font-family: Arial, sans-serif;">
