@@ -39,9 +39,8 @@ def login(payload: UserLogin, response: Response, db: Session = Depends(get_db))
 @router.post("/logout")
 def logout(request: Request, response: Response, db: Session = Depends(get_db)):
     refresh_token = request.cookies.get("refresh_token")
-    print(refresh_token)
+    
     if refresh_token:
-        print(f"Logging out user with refresh token: {refresh_token}")
         try:
             delete_refresh_token(db, refresh_token)
             response.delete_cookie(
