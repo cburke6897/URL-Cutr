@@ -139,7 +139,7 @@ export default function Auth() {
             {!isSignup && (
                 <button
                     type="button"
-                    onClick={() => navigate("/password-reset")}
+                    onClick={() => navigate("/reset-password")}
                     className="mt-3 w-full text-left text-sm font-medium text-button hover:underline"
                 >
                     Forgot Password?
