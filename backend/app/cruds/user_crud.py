@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 from app.models.user_model import User
-from app.core.security import hash_password, verify_password
+from app.core.security import hash_string, verify_string
 
 
 # Create a new user entry in the database
 def create(db: Session, email: str, username: str, password: str):
-    hashed_password = hash_password(password)
+    hashed_password = hash_string(password)
 
     db_user = User(username=username, email=email, hashed_password=hashed_password)
 
@@ -27,6 +27,6 @@ def authenticate_user(db: Session, email: str, password: str):
     user = get_user_by_email(db, email)
     if not user:
         return None
-    if not verify_password(password, user.hashed_password):
+    if not verify_string(password, user.hashed_password):
         return None
     return user
