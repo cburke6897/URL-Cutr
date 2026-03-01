@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, BigInteger, func
+from sqlalchemy import Column, String, DateTime, BigInteger, func
 from app.db.base import Base
 
 class ResetToken(Base):
