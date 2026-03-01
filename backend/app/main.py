@@ -7,6 +7,7 @@ from app.db.base import Base
 from app.api.routes.url_routes import router as shorten_router
 from app.api.routes.auth_routes import router as auth_router
 from app.api.routes.reset_routes import router as reset_router
+from app.api.routes.delete_routes import router as delete_router
 from app.core.tlds import load_tlds
 from app.services.cleanup import delete_expired_urls_periodically
 
@@ -26,6 +27,7 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(shorten_router)
 app.include_router(auth_router)
 app.include_router(reset_router)
+app.include_router(delete_router)
 
 
 # Add CORS middleware
