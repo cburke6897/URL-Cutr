@@ -58,8 +58,9 @@ def logout(request: Request, response: Response, db: Session = Depends(get_db)):
 
 @router.post("/signup")
 def signup(payload: UserCreate, db: Session = Depends(get_db)):
-    user = create(db, payload.email, payload.username, payload.password)
-    if not user:
+    try: 
+        create(db, payload.email, payload.username, payload.password)
+    except Exception:
         raise HTTPException(status_code=400, detail="Email or username already registered")
     return {"message": "User created successfully"}
 
