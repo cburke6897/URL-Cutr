@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
-import { changePasswordWithToken } from "../utils/Change";
+import { changePasswordWithToken } from "../utils/ResetPassword";
 
 export default function ChangePassword() {
     const [userId, setUserId] = useState(null);
@@ -19,7 +19,7 @@ export default function ChangePassword() {
         async function init() {
             const token = searchParams.get("token");
             if (!token) {
-                navigate("/");
+                navigate("/reset-password");
                 return;
             }
             
@@ -29,7 +29,7 @@ export default function ChangePassword() {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ token }),
+                    body: JSON.stringify({ token: token }),
                 });
 
                 if (!response.ok) {
