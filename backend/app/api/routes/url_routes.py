@@ -9,6 +9,7 @@ from app.services.shortener import generate_code
 from app.services.rate_limit import rate_limit
 from app.core.tlds import is_valid_tld
 from app.core.deps import get_current_user, get_current_user_optional
+from app.core.config import settings
 
 
 router = APIRouter()
@@ -66,7 +67,7 @@ def redirect(code: str, db: Session = Depends(get_db)):
     # Look up the original URL in the database using the provided code
     url = url_crud.get_url_by_code(db, code)
     if not url:
-        return RedirectResponse("http://localhost:5173/?error=Invalid+URL", status_code=302)
+        return RedirectResponse(f"{settings.frontend_url}/?error=Invalid+URL", status_code=302)
     
     # Increment the click count for the URL and commit the change to the database
     url.clicks += 1
