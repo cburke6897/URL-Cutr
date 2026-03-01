@@ -4,6 +4,41 @@ const ensureValidPassword = (value) => {
     return passwordRegex.test(value);
 }
 
+const ensureValidEmail = (value) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(value);
+}
+
+export async function resetPassword(email) {
+    if (!email) {
+        return { error: "Email is required" };
+    }
+
+    if (!ensureValidEmail(email)) {
+        return { error: "Invalid email" };
+    }
+
+    try {
+        const response = await fetch("http://localhost:8000/send-reset-password-email", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: email }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return { error: data.detail || "Failed to send reset email" };
+        }
+
+        return { message: data.message || "If the email is registered, a reset link has been sent." };
+    } catch (err) {
+        return { error: "Network error. Please try again." };
+    }
+}
+
 export async function changePasswordWithToken({ token, newPassword, confirmPassword, navigate, setError, setSuccess }) {
     setError("");
     setSuccess("");
@@ -24,13 +59,13 @@ export async function changePasswordWithToken({ token, newPassword, confirmPassw
     }
 
     try {
-        const response = await fetch("http://localhost:8000/change-password", {
+        const response = await fetch("http://localhost:8000/reset-password", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                token,
+                token: token,
                 new_password: newPassword,
             }),
         });
