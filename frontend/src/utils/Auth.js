@@ -15,7 +15,7 @@ export async function logout(navigate, location, token) {
     
     if (location.pathname == "/") {
         navigate(0)
-    } else {
+    } else if (location.pathname !== "/change-password") {
         navigate("/");
     }
 }
