@@ -72,7 +72,7 @@ def send_delete_account_email(payload: DeleteAccountEmail, db: Session = Depends
             print(f"Failed to send email: {str(e)}")
             raise HTTPException(status_code=500, detail="Failed to send delete account email. Please try again later.")
     
-    return {"message": "Delete account request received. A delete account link has been sent to your email if an account exists with that email."}
+    return {"message": "Delete account request received. A delete account link has been sent to your email."}
 
 
 @router.post("/verify-delete-token")
