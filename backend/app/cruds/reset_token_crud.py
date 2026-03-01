@@ -27,3 +27,12 @@ def verify_and_get_reset_token(db: Session, plain_token: str):
             return token_record
     
     return None
+
+
+def delete_reset_token(db: Session, token_id: int):
+    token = db.query(ResetToken).filter(ResetToken.id == token_id).first()
+    if token:
+        db.delete(token)
+        db.commit()
+        return True
+    return False
