@@ -68,7 +68,7 @@ export async function signup({ email, username, password, confirmPassword, navig
         }
 
         await response.json();
-        navigate(`/auth?success=${encodeURIComponent("Account created successfully! Please log in.")}`, { replace: true });
+        navigate(`/auth?success=${encodeURIComponent("Account created successfully! Please log in.")}`);
         return { success: true, switchToLogin: true };
     } catch (requestError){
         return { error: "Network error" };
