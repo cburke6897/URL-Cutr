@@ -136,6 +136,16 @@ export default function Auth() {
             <EnterButton onClick={handleSubmit} title={submitText} text={submitText} />
             </div>
 
+            {!isSignup && (
+                <button
+                    type="button"
+                    onClick={() => navigate("/password-reset")}
+                    className="mt-3 w-full text-left text-sm font-medium text-button hover:underline"
+                >
+                    Forgot Password?
+                </button>
+            )}
+
             <div className="mt-4 min-h-6">
                 {error && (
                 <p className="text-red-600 dark:text-red-400 mt-4 font-semibold transition-colors">
