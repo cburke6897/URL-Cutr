@@ -1,4 +1,10 @@
 import { fetchCurrentUser } from "./User";
+import { logout } from "./Auth";
+
+const ensureValidEmail = (value) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(value);
+}
 
 export async function sendDeleteAccountEmail() {
     try {
@@ -35,5 +41,54 @@ export async function sendDeleteAccountEmail() {
         const errorMessage = "Network error. Please try again.";
         window.alert(errorMessage);
         return { error: errorMessage };
+    }
+}
+
+
+export async function deleteAccountWithToken({ token, email, password, navigate, location, setError, setSuccess }) {
+    setError("");
+    setSuccess("");
+
+    if (!email || !password) {
+        setError("Please fill in all fields");
+        return;
+    }
+
+    if (!ensureValidEmail(email)) {
+        setError("Please enter a valid email address");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:8000/delete-account", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ token, email, password }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            const errorMessage = data.detail || "Failed to delete account";
+            setError(errorMessage);
+            return;
+        }
+
+        setSuccess("Account deleted successfully");
+        
+        // Get the token and logout the user
+        const accessToken = localStorage.getItem("token");
+        localStorage.removeItem("token");
+        
+        if (accessToken) {
+            await logout(navigate, location, accessToken);
+            navigate("/");
+        }
+
+        navigate("/");
+    } catch (err) {
+        setError("Network error. Please try again.");
     }
 }
