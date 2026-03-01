@@ -1,10 +1,9 @@
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 from backend.app.models.reset_token_model import ResetToken
-from app.core.security import hash_reset_token
+from app.core.security import hash_reset_token, verify_reset_token
 
 EXPIRE_MINUTES = 15
-
 
 def save_reset_token(db: Session, user_id: int, token: str):
     hashed_token = hash_reset_token(token)
@@ -14,3 +13,17 @@ def save_reset_token(db: Session, user_id: int, token: str):
     db.commit()
     db.refresh(reset_token)
     return reset_token
+
+
+def verify_and_get_reset_token(db: Session, plain_token: str):
+    # Get all non-expired tokens
+    tokens = db.query(ResetToken).filter(
+        ResetToken.expires_at > datetime.now(timezone.utc)
+    ).all()
+    
+    # Check each token hash against the plain token
+    for token_record in tokens:
+        if verify_reset_token(plain_token, token_record.token):
+            return token_record
+    
+    return None
