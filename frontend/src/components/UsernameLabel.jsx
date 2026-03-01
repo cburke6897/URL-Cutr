@@ -6,12 +6,10 @@ export default function UsernameLabel({ username = "", admin = false }) {
 	const [open, setOpen] = useState(false);
 	const menuRef = useRef(null);
 	const navigate = useNavigate();
-	const location = useLocation();
-	const token = localStorage.getItem("token");
 
 	const menuOptions = {
 		"Change Username": () => console.log("Change Username clicked"),
-		"Change Password": () => console.log("Change Password clicked"),
+		"Reset Password": () => navigate("/reset-password"),
 		"Delete Account": () => console.log("Delete Account clicked"),
 	};
 
