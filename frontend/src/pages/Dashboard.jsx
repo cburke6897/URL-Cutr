@@ -14,6 +14,8 @@ export default function Dashboard() {
     const [urls, setUrls] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const urlsPerPage = 7;
 
     useEffect(() => {
         async function init() {
@@ -37,6 +39,19 @@ export default function Dashboard() {
         init()
     }, [navigate]);
 
+    useEffect(() => {
+        const previousBodyOverflow = document.body.style.overflow;
+        const previousHtmlOverflow = document.documentElement.style.overflow;
+
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
+
+        return () => {
+            document.body.style.overflow = previousBodyOverflow;
+            document.documentElement.style.overflow = previousHtmlOverflow;
+        };
+    }, []);
+
     const fetchUserUrls = async (token) => {
         try {
             setLoading(true);
@@ -50,6 +65,7 @@ export default function Dashboard() {
             if (response.ok) {
                 const data = await response.json();
                 setUrls(data);
+                setCurrentPage(1);
             } else {
                 setError("Failed to fetch URLs");
             }
@@ -66,13 +82,17 @@ export default function Dashboard() {
         return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
+    const totalPages = Math.max(1, Math.ceil(urls.length / urlsPerPage));
+    const startIndex = (currentPage - 1) * urlsPerPage;
+    const currentUrls = urls.slice(startIndex, startIndex + urlsPerPage);
+
     return (
-        <div className="min-h-screen bg-bg-light dark:bg-bg-dark transition-colors">
+        <div className="h-screen overflow-hidden bg-bg-light dark:bg-bg-dark transition-colors">
             <DropdownMenu />
             {user && <UsernameLabel username={user.username} admin = {user.admin} />}
             
-            <div className="flex flex-col items-center justify-center pt-20 px-4">
-                <div className="w-full max-w-6xl bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg p-8 transition-colors">
+            <div className="h-full flex flex-col items-center justify-start pt-20 px-4 overflow-hidden">
+                <div className="w-full max-w-6xl bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg p-6 transition-colors">
                     <h1 className="text-3xl font-bold text-text-light dark:text-text-dark mb-6">
                         My Cut URLs
                     </h1>
@@ -93,13 +113,13 @@ export default function Dashboard() {
 
                     {!loading && urls.length > 0 && (
                         <div className="space-y-2">
-                            {urls.map((url, index) => (
+                            {currentUrls.map((url, index) => (
                                 <div 
                                     key={url.id || url.code} 
                                     className="bg-bg-light dark:bg-bg-dark rounded-lg px-4 py-2 border border-gray-300 dark:border-gray-600 transition-colors flex items-center gap-4"
                                 >
                                     <div className="w-8 text-text-light dark:text-text-dark font-semibold">
-                                        {index + 1}.
+                                        {startIndex + index + 1}.
                                     </div>
                                     
                                     <div className="w-30 min-w-0">
@@ -140,6 +160,32 @@ export default function Dashboard() {
                                     </div>
                                 </div>
                             ))}
+
+                            {totalPages > 1 && (
+                                <div className="flex items-center justify-between pt-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                                        disabled={currentPage === 1}
+                                        className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 text-text-light dark:text-text-dark disabled:opacity-50 disabled:cursor-not-allowed hover:bg-black/5 dark:hover:bg-white/10"
+                                    >
+                                        Previous
+                                    </button>
+
+                                    <span className="text-sm text-text-light dark:text-text-dark">
+                                        Page {currentPage} of {totalPages}
+                                    </span>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                                        disabled={currentPage === totalPages}
+                                        className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 text-text-light dark:text-text-dark disabled:opacity-50 disabled:cursor-not-allowed hover:bg-black/5 dark:hover:bg-white/10"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
