@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db.session import get_db
 from app.cruds.user_crud import get_user_by_email
-from app.schemas.email_schema import ResetPasswordEmail, VerifyTokenRequest
-from app.cruds.reset_token_crud import save_reset_token, verify_and_get_reset_token
+from app.schemas.email_schema import ResetPasswordEmail, VerifyTokenRequest, ResetPassword
+from app.cruds.reset_token_crud import save_reset_token, verify_and_get_reset_token, delete_reset_token
 from app.core.security import hash_reset_token
 
 router = APIRouter()
@@ -84,7 +84,36 @@ def verify_reset_token_route(payload: VerifyTokenRequest, db: Session = Depends(
     if not token_record:
         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
     
+    # Get user by email to return user_id
+    user = get_user_by_email(db, token_record.user_email)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
     return {
         "valid": True,
-        "user_id": token_record.user_id,
     }
+
+
+@router.post("/reset-password")
+def reset_password(payload: ResetPassword, db: Session = Depends(get_db)):
+    """Reset user password using a valid reset token"""
+    # Verify the token
+    token_record = verify_and_get_reset_token(db, payload.token)
+    
+    if not token_record:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+    
+    # Get the user by email from token record
+    user = get_user_by_email(db, token_record.user_email)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Update the password
+    user.set_password(payload.new_password)
+    
+    # Delete the used token
+    delete_reset_token(db, token_record.id)
+    
+    db.commit()
+    
+    return {"message": "Password reset successfully"}
