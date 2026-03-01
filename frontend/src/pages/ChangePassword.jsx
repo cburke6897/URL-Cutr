@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
+import DropdownMenu from "../components/DropdownMenu";
 import { changePasswordWithToken } from "../utils/ResetPassword";
 import { logout } from "../utils/Auth";
 
@@ -74,6 +75,7 @@ export default function ChangePassword() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors">
+                <DropdownMenu />
                 <div className="text-text-light dark:text-text-dark text-xl">
                     Verifying token...
                 </div>
@@ -83,6 +85,7 @@ export default function ChangePassword() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
+            <DropdownMenu />
             <div className="min-h-[23.8rem] w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
                 
                 <h1 className="text-text-light dark:text-text-dark text-3xl font-bold mb-4 transition-colors">
