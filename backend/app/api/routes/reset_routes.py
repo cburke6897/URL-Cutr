@@ -96,7 +96,6 @@ def verify_reset_token_route(payload: VerifyTokenRequest, db: Session = Depends(
 
 @router.post("/reset-password")
 def reset_password(payload: ResetPassword, db: Session = Depends(get_db)):
-    """Reset user password using a valid reset token"""
     # Verify the token
     token_record = verify_and_get_reset_token(db, payload.token)
     
