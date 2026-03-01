@@ -7,7 +7,6 @@ from app.db.session import get_db
 from app.cruds.user_crud import get_user_by_email
 from app.schemas.email_schema import ResetPasswordEmail, VerifyTokenRequest, ResetPassword
 from app.cruds.reset_token_crud import save_reset_token, verify_and_get_reset_token, delete_reset_token
-from app.core.security import hash_reset_token
 
 router = APIRouter()
 
@@ -23,11 +22,8 @@ def send_reset_password_email(payload: ResetPasswordEmail, db: Session = Depends
         # Generate cryptographically secure random token
         reset_token = secrets.token_urlsafe(32)
         
-        # Hash the token for secure storage
-        hashed_token = hash_reset_token(reset_token)
-        
-        # Save hashed token to database (expires in 1 hour)
-        save_reset_token(db, user.email, hashed_token)
+        # Save token to database (will be hashed by save_reset_token function)
+        save_reset_token(db, user.email, reset_token)
         
         # Construct reset link with plain token
         reset_link = f"{settings.frontend_url}/change-password?token={reset_token}"
