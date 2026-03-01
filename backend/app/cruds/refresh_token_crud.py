@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.models.refresh_token_model import RefreshToken
 
 def save_refresh_token(db: Session, user_id: int, token: str) :
-    refresh_token = RefreshToken(user_id=user_id, token=token, expires_at=datetime.utcnow() + timedelta(days=7))
+    refresh_token = RefreshToken(user_id=user_id, token=token, expires_at=datetime.now(timezone.utc) + timedelta(days=7))
     db.add(refresh_token)
     db.commit()
     db.refresh(refresh_token)
