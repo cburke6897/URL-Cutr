@@ -7,6 +7,7 @@ import DropdownMenu from "../components/DropdownMenu";
 import UsernameLabel from "../components/UsernameLabel";
 import { fetchCurrentUser } from "../utils/User";
 import { shortenUrl } from "../utils/Url";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -15,15 +16,16 @@ export default function Home() {
   const [expiration, setExpiration] = useState(5);
   const [code, setCode] = useState("");
   const [user, setUser] = useState(null);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const msg = params.get("error");
-    if (msg) {
-      setError(msg);
+    const errorMessage = searchParams.get("error");
+    if (errorMessage) {
+      setError(errorMessage);
     }
 
-    window.history.replaceState({}, "", "/");
+    navigate("/", { replace: true }); // Clear query params from URL
 
     async function init() {
       setUser(await fetchCurrentUser());
