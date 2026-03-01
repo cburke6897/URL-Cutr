@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db.session import get_db
 from app.cruds.user_crud import get_user_by_email
-from app.schemas.email_schema import ResetPasswordEmail
-from app.cruds.reset_token_crud import save_reset_token
+from app.schemas.email_schema import ResetPasswordEmail, VerifyTokenRequest
+from app.cruds.reset_token_crud import save_reset_token, verify_and_get_reset_token
 from app.core.security import hash_reset_token
 
 router = APIRouter()
@@ -74,3 +74,17 @@ def send_reset_password_email(payload: ResetPasswordEmail, db: Session = Depends
     
     # Always return same message (security: prevent user enumeration)
     return {"message": "If an account exists with this email, a password reset link has been sent"}
+
+
+@router.post("/verify-reset-token")
+def verify_reset_token_route(payload: VerifyTokenRequest, db: Session = Depends(get_db)):
+    # Verify if a reset token is valid and not expired
+    token_record = verify_and_get_reset_token(db, payload.token)
+    
+    if not token_record:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+    
+    return {
+        "valid": True,
+        "user_id": token_record.user_id,
+    }
