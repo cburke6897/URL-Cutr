@@ -45,9 +45,8 @@ export async function sendDeleteAccountEmail() {
 }
 
 
-export async function deleteAccountWithToken({ token, email, password, navigate, location, setError, setSuccess }) {
+export async function deleteAccountWithToken({ token, email, password, navigate, location, setError }) {
     setError("");
-    setSuccess("");
 
     if (!email || !password) {
         setError("Please fill in all fields");
@@ -75,8 +74,6 @@ export async function deleteAccountWithToken({ token, email, password, navigate,
             setError(errorMessage);
             return;
         }
-
-        setSuccess("Account deleted successfully");
         
         // Get the token and logout the user
         const accessToken = localStorage.getItem("token");
@@ -84,10 +81,9 @@ export async function deleteAccountWithToken({ token, email, password, navigate,
         
         if (accessToken) {
             await logout(navigate, location, accessToken);
-            navigate("/");
         }
 
-        navigate("/");
+        navigate(`/?success=${encodeURIComponent("Account deleted successfully")}`);
     } catch (err) {
         setError("Network error. Please try again.");
     }

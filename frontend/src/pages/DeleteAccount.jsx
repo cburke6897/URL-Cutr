@@ -9,7 +9,6 @@ export default function DeleteAccount() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(true);
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -33,16 +32,14 @@ export default function DeleteAccount() {
                 });
 
                 if (!response.ok) {
-                    navigate("/");
-                    window.alert("Invalid or expired delete token");
+                    navigate(`/?error=${encodeURIComponent("Invalid or expired delete token")}`);
                     return;
                 }
 
                 await response.json();
                 setLoading(false);
             } catch (err) {
-                navigate("/");
-                window.alert("Failed to verify delete token");
+                navigate(`/?error=${encodeURIComponent("Failed to verify delete token")}`);
             }
         }
 
@@ -51,14 +48,8 @@ export default function DeleteAccount() {
 
     const handleDeleteAccount = async () => {
         const token = searchParams.get("token");
-        await deleteAccountWithToken({ token, email, password, navigate, location, setError, setSuccess });
+        await deleteAccountWithToken({ token, email, password, navigate, location, setError });
     }
-
-    useEffect(() => {
-        if (success) {
-            window.alert(success);
-        }
-    }, [success]);
 
     if (loading) {
         return (

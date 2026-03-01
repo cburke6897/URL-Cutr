@@ -13,6 +13,7 @@ export default function Home() {
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [expiration, setExpiration] = useState(5);
   const [code, setCode] = useState("");
   const [user, setUser] = useState(null);
@@ -21,8 +22,14 @@ export default function Home() {
 
   useEffect(() => {
     const errorMessage = searchParams.get("error");
+    const successMessage = searchParams.get("success");
+    
     if (errorMessage) {
       setError(errorMessage);
+    }
+    
+    if (successMessage) {
+      setSuccess(successMessage);
     }
 
     navigate("/", { replace: true }); // Clear query params from URL
@@ -36,6 +43,7 @@ export default function Home() {
 
   const shorten = async () => {
     setError("");
+    setSuccess("");
     setShortUrl("");
 
     try {
@@ -84,6 +92,12 @@ export default function Home() {
             >
               {shortUrl}
             </a>
+          </p>
+        )}
+
+        {success && (
+          <p className="text-green-600 dark:text-green-400 mt-4 font-semibold transition-colors">
+            {success}
           </p>
         )}
 
