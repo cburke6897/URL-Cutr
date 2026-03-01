@@ -1,22 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
 import DropdownMenu from "../components/DropdownMenu";
+import UsernameLabel from "../components/UsernameLabel";
 import { resetPassword } from "../utils/ResetPassword";
+import { fetchCurrentUser } from "../utils/User";
 
 export default function ResetPassword() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [user, setUser] = useState(null);
   const [searchParams] = useSearchParams();
   const errorMessage = searchParams.get("error");
   const displayError = error || (!message && errorMessage ? decodeURIComponent(errorMessage) : "");
 
+  useEffect(() => {
+    async function init() {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const userData = await fetchCurrentUser();
+        if (userData) {
+          setUser(userData);
+        }
+      }
+    }
+    init();
+  }, []);
+
   const handleResetPassword = async () => {
     setError("");
     setMessage("");
-
+      
     const result = await resetPassword(email);
 
     if (result.error) {
@@ -29,6 +45,7 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen flex justify-center items-start bg-bg-light dark:bg-bg-dark transition-colors p-4 pt-[7.5%]">
+      {user && <UsernameLabel username={user.username} admin={user.admin} />}
       <DropdownMenu />
       <div className="w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 rounded-xl shadow-lg text-center transition-colors">
         <label className="block text-text-light dark:text-text-dark text-3xl font-bold mb-6 transition-colors">
