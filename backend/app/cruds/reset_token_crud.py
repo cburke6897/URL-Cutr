@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
-from backend.app.models.reset_token_model import ResetToken
+from app.models.reset_token_model import ResetToken
 from app.core.security import hash_reset_token, verify_reset_token
 
 EXPIRE_MINUTES = 15
