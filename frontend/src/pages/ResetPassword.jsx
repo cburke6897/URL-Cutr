@@ -29,7 +29,8 @@ export default function ResetPassword() {
     init();
   }, []);
 
-  const handleResetPassword = async () => {
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
     setError("");
     setMessage("");
       
@@ -43,39 +44,28 @@ export default function ResetPassword() {
     setMessage(result.message || "If the email is registered, a reset link has been sent.");
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleResetPassword();
-    }
-  };
-
   return (
     <div className="min-h-screen flex justify-center items-start bg-bg-light dark:bg-bg-dark transition-colors p-4 pt-[7.5%]">
       {user && <UsernameLabel username={user.username} admin={user.admin} />}
       <DropdownMenu />
-      <div 
-        className="w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors"
-        onKeyDown={handleKeyDown}
-      >
+      <div className="w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
         <label className="block text-text-light dark:text-text-dark text-3xl font-bold mb-6 transition-colors">
           Password Reset
         </label>
 
-        <div className="flex flex-col gap-3 items-center">
+        <form onSubmit={handleResetPassword} className="flex flex-col gap-3 items-center">
           <TextInput
             placeholder="Email"
             value={email}
             onChange={setEmail}
             additionalClasses="w-full"
             title="Enter your email"
+            type="email"
           />
-        </div>
+          <EnterButton type="submit" title="Send Reset Link" text="Send Reset Link" />
+        </form>
 
-        <div className="mt-5">
-          <EnterButton onClick={handleResetPassword} title="Send Reset Link" text="Send Reset Link" />
-        </div>
-
-        <div className="mt-4 h-12 flex items-center justify-center">
+        <div className="mt-2 h-8 flex items-center justify-center">
           {message && (
             <p className="text-success dark:text-success-dark font-semibold transition-colors">
               {message}

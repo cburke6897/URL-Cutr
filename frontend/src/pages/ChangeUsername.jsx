@@ -27,20 +27,11 @@ export default function ChangeUsername() {
         await changeUsername({ email, password, newUsername, navigate, setError });
     };
 
-    const handleKeyDown = (e) => {
-        if (e.key === "Enter") {
-            handleChangeUsername();
-        }
-    };
-
     return (
         <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
             <DropdownMenu />
             {user && <UsernameLabel username={user.username} admin={user.admin} />}
-            <div 
-                className="min-h-[23.8rem] w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors"
-                onKeyDown={handleKeyDown}
-            >
+            <div className="min-h-[23.8rem] w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
                 <h1 className="text-text-light dark:text-text-dark text-3xl font-bold mb-4 transition-colors">
                     Change Username
                 </h1>
@@ -49,7 +40,7 @@ export default function ChangeUsername() {
                     Enter your new username, email and password
                 </p>
         
-                <div className="flex flex-col gap-3 items-center p-3">
+                <form onSubmit={handleChangeUsername} className="flex flex-col gap-3 items-center p-3">
                     <TextInput
                         placeholder="New Username"
                         value={newUsername}
@@ -64,6 +55,7 @@ export default function ChangeUsername() {
                         type="email"
                         additionalClasses="w-full"
                         title="Enter your email"
+                        autocomplete="username"
                     />
                     <TextInput
                         placeholder="Password"
@@ -72,16 +64,11 @@ export default function ChangeUsername() {
                         type="password"
                         additionalClasses="w-full"
                         title="Enter your password"
+                        autocomplete="current-password"
                     />
-                </div>
 
-                <div className="flex items-center gap-1 mt-3">
-                    <EnterButton
-                        text="Change Username"
-                        onClick={handleChangeUsername}
-                        title="Change Username"
-                    />
-                </div>
+                    <EnterButton text="Change Username" type="submit" title="Change Username" />
+                </form>
 
                 <div className="h-10 mt-4">
                     {error && (

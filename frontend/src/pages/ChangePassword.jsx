@@ -70,12 +70,6 @@ export default function ChangePassword() {
         });
     };
 
-    const handleKeyDown = (e) => {
-        if (e.key === "Enter") {
-            handleChangePassword();
-        }
-    };
-
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors">
@@ -90,20 +84,16 @@ export default function ChangePassword() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
             <DropdownMenu />
-            <div 
-                className="min-h-[23.8rem] w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors"
-                onKeyDown={handleKeyDown}
-            >
-                
+            <div className="min-h-[23.8rem] w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
                 <h1 className="text-text-light dark:text-text-dark text-3xl font-bold mb-4 transition-colors">
                     Change Password
                 </h1>
 
-                <p className="text-text-light dark:text-text-dark mb-6 transition-colors">
+                <p className="text-text-light dark:text-text-dark mb-3 transition-colors">
                     Enter your new password below
                 </p>
         
-                <div className="flex flex-col gap-3 items-center p-3">
+                <form onSubmit={handleChangePassword} className="flex flex-col gap-3 items-center p-3">
                     <TextInput 
                         placeholder="New Password" 
                         value={newPassword} 
@@ -111,6 +101,7 @@ export default function ChangePassword() {
                         additionalClasses="w-full" 
                         title="Enter your new password"
                         type="password"
+                        autocomplete="new-password"
                     />
                     <TextInput 
                         placeholder="Confirm Password" 
@@ -119,12 +110,10 @@ export default function ChangePassword() {
                         additionalClasses="w-full" 
                         title="Confirm your new password"
                         type="password"
+                        autocomplete="new-password"
                     />
-                </div>
-
-                <div className="flex items-center gap-1 mt-3">
-                    <EnterButton onClick={handleChangePassword} title="Change Password" text="Change Password"/>
-                </div>
+                    <EnterButton type="submit" title="Change Password" text="Change Password"/>
+                </form>
 
                 {success && (
                     <p className="text-success dark:text-success-dark mt-4 font-semibold transition-colors">
