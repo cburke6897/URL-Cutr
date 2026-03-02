@@ -21,6 +21,25 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
+      - name: Validate required secrets are present
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${{ secrets.RESOURCE_GROUP }}" || (echo "::error::RESOURCE_GROUP missing"; exit 1)
+          test -n "${{ secrets.REGISTRY_LOGIN_SERVER }}" || (echo "::error::REGISTRY_LOGIN_SERVER missing"; exit 1)
+          test -n "${{ secrets.REGISTRY_USERNAME }}" || (echo "::error::REGISTRY_USERNAME missing"; exit 1)
+          test -n "${{ secrets.REGISTRY_PASSWORD }}" || (echo "::error::REGISTRY_PASSWORD missing"; exit 1)
+
+          test -n "${{ secrets.DATABASE_URL }}" || (echo "::error::DATABASE_URL missing or empty"; exit 1)
+          test -n "${{ secrets.REDIS_URL }}" || (echo "::error::REDIS_URL missing or empty"; exit 1)
+          test -n "${{ secrets.ACCESS_TOKEN_SECRET_KEY }}" || (echo "::error::ACCESS_TOKEN_SECRET_KEY missing or empty"; exit 1)
+          test -n "${{ secrets.REFRESH_TOKEN_SECRET_KEY }}" || (echo "::error::REFRESH_TOKEN_SECRET_KEY missing or empty"; exit 1)
+          test -n "${{ secrets.RESEND_API_KEY }}" || (echo "::error::RESEND_API_KEY missing or empty"; exit 1)
+          test -n "${{ secrets.SUPPORT_EMAIL }}" || (echo "::error::SUPPORT_EMAIL missing or empty"; exit 1)
+          test -n "${{ secrets.FRONTEND_URL }}" || (echo "::error::FRONTEND_URL missing or empty"; exit 1)
+
+          echo "All required secrets are present."
+
       - name: Build and push image
         shell: bash
         run: |
@@ -36,15 +55,26 @@ jobs:
           set -euo pipefail
 
           RG="${{ secrets.RESOURCE_GROUP }}"
-          ACI_NAME="${{ secrets.ACI_NAME || 'aci-cutr' }}"
-          LOCATION="${{ secrets.LOCATION || 'centralus' }}"
+          ACI_NAME="${{ secrets.ACI_NAME }}"
+          LOCATION="${{ secrets.LOCATION }}"
           IMAGE="${IMAGE}"
 
-          # DNS label rules are strict; sanitize + keep under 63 chars.
-          DNS_RAW="${RG}-${{ github.run_number }}"
-          DNS_LABEL="$(echo "$DNS_RAW" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-' | cut -c1-63)"
+          # Defaults (GitHub expressions don't support || like JS; do it here)
+          ACI_NAME="${ACI_NAME:-aci-cutr}"
+          LOCATION="${LOCATION:-centralus}"
 
-          # Recreate so image/env updates apply reliably
+          # DNS label must be <=63 chars, lowercase, alnum or hyphen, start/end alnum
+          # Use repo + run number so it's stable/unique
+          DNS_RAW="${{ github.event.repository.name }}-${{ github.run_number }}"
+          DNS_LABEL="$(echo "$DNS_RAW" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-' | sed 's/^-*//; s/-*$//' | cut -c1-63)"
+
+          echo "RG=$RG"
+          echo "ACI_NAME=$ACI_NAME"
+          echo "LOCATION=$LOCATION"
+          echo "IMAGE=$IMAGE"
+          echo "DNS_LABEL=$DNS_LABEL"
+
+          # Recreate to ensure env/image updates apply reliably
           az container delete -g "$RG" -n "$ACI_NAME" --yes || true
 
           az container create \
@@ -70,19 +100,30 @@ jobs:
               SUPPORT_EMAIL="${{ secrets.SUPPORT_EMAIL }}" \
               FRONTEND_URL="${{ secrets.FRONTEND_URL }}"
 
-      - name: Show ACI events + crash reason
+      - name: Show ACI state + events + previousState
         if: always()
         shell: bash
         run: |
           set -euo pipefail
           RG="${{ secrets.RESOURCE_GROUP }}"
-          ACI_NAME="${{ secrets.ACI_NAME || 'aci-cutr' }}"
+          ACI_NAME="${{ secrets.ACI_NAME }}"
+          ACI_NAME="${ACI_NAME:-aci-cutr}"
 
+          echo "=== Container Group State + Events ==="
           az container show -g "$RG" -n "$ACI_NAME" \
             --query "{state:instanceView.state, events:instanceView.events}" -o yaml || true
 
+          echo "=== Previous Container State (exit codes / reason) ==="
           az container show -g "$RG" -n "$ACI_NAME" \
             --query "instanceView.containers[0].instanceView.previousState" -o yaml || true
+
+          echo "=== Current Container State ==="
+          az container show -g "$RG" -n "$ACI_NAME" \
+            --query "instanceView.containers[0].instanceView.currentState" -o yaml || true
+
+          echo "=== Exposed FQDN ==="
+          az container show -g "$RG" -n "$ACI_NAME" \
+            --query "ipAddress.fqdn" -o tsv || true
 
       - name: Show container logs (stdout/stderr)
         if: always()
@@ -90,5 +131,7 @@ jobs:
         run: |
           set -euo pipefail
           RG="${{ secrets.RESOURCE_GROUP }}"
-          ACI_NAME="${{ secrets.ACI_NAME || 'aci-cutr' }}"
+          ACI_NAME="${{ secrets.ACI_NAME }}"
+          ACI_NAME="${ACI_NAME:-aci-cutr}"
+
           az container logs -g "$RG" -n "$ACI_NAME" || true
