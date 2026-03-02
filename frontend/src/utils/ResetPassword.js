@@ -14,6 +14,10 @@ export async function resetPassword(email) {
         return { error: "Email is required" };
     }
 
+    if (email.length > 255) {
+        return { error: "Email must be 255 characters or less" };
+    }
+
     if (!ensureValidEmail(email)) {
         return { error: "Invalid email" };
     }
@@ -45,6 +49,11 @@ export async function changePasswordWithToken({ token, newPassword, confirmPassw
 
     if (!newPassword || !confirmPassword) {
         setError("Please fill in all fields");
+        return;
+    }
+
+    if (newPassword.length > 128) {
+        setError("Password must be 128 characters or less");
         return;
     }
 

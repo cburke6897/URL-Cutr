@@ -43,13 +43,17 @@ export default function ChangeUsername() {
                 </p>
         
                 <form onSubmit={handleChangeUsername} className="flex flex-col gap-3 items-center p-3">
-                    <TextInput
-                        placeholder="New Username"
-                        value={newUsername}
-                        onChange={setNewUsername}
-                        additionalClasses="w-full"
-                        title="Enter your new username"
-                    />
+                    <div className="w-full">
+                        <TextInput
+                            placeholder="New Username"
+                            value={newUsername}
+                            onChange={setNewUsername}
+                            additionalClasses="w-full"
+                            title="Enter your new username (max 50 characters)"
+                            maxLength={50}
+                        />
+                        <p className="text-xs text-text-light/50 dark:text-text-dark/50 mt-1 text-right">{newUsername.length}/50</p>
+                    </div>
                     <TextInput
                         placeholder="Email"
                         value={email}
@@ -58,6 +62,7 @@ export default function ChangeUsername() {
                         additionalClasses="w-full"
                         title="Enter your email"
                         autocomplete="username"
+                        maxLength={255}
                     />
                     <TextInput
                         placeholder="Password"
@@ -67,6 +72,7 @@ export default function ChangeUsername() {
                         additionalClasses="w-full"
                         title="Enter your password"
                         autocomplete="current-password"
+                        maxLength={128}
                     />
 
                     <EnterButton text="Change Username" type="submit" title="Change Username" />

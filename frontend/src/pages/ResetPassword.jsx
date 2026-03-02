@@ -61,6 +61,7 @@ export default function ResetPassword() {
             additionalClasses="w-full"
             title="Enter your email"
             type="email"
+            maxLength={255}
           />
           <EnterButton type="submit" title="Send Reset Link" text="Send Reset Link" />
         </form>

@@ -96,6 +96,7 @@ export default function DeleteAccount() {
                         additionalClasses="w-full" 
                         title="Enter your email"
                         type="email"
+                        maxLength={255}
                     />
                     <TextInput 
                         placeholder="Password" 
@@ -104,6 +105,7 @@ export default function DeleteAccount() {
                         additionalClasses="w-full" 
                         title="Enter your password"
                         type="password"
+                        maxLength={128}
                     />
                     <EnterButton type="submit" title="Delete Account" text="Delete Account"/>
                 </form>

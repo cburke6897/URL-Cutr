@@ -101,32 +101,44 @@ export default function Auth() {
 
                 <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="flex flex-col gap-3 items-center">
                     {isSignup && (
-                        <TextInput
-                            placeholder="Username"
-                            value={username}
-                            onChange={setUsername}
-                            additionalClasses="w-full"
-                            title="Enter your username"
-                        />
+                        <div className="w-full">
+                            <TextInput
+                                placeholder="Username"
+                                value={username}
+                                onChange={setUsername}
+                                additionalClasses="w-full"
+                                title="Enter your username (max 50 characters)"
+                                maxLength={50}
+                            />
+                            <p className="text-xs text-text-light/50 dark:text-text-dark/50 mt-1 text-right">{username.length}/50</p>
+                        </div>
                     )}
-                    <TextInput
-                        placeholder="Email"
-                        type="email"
-                        value={email}
-                        onChange={setEmail}
-                        additionalClasses="w-full"
-                        title="Enter your email"
-                        autocomplete="email"
-                    />
-                    <TextInput
-                        placeholder="Password"
-                        type="password"
-                        value={password}
-                        onChange={setPassword}
-                        additionalClasses="w-full"
-                        title="Enter your password"
-                        autocomplete = {isSignup ? "new-password" : "current-password"}
-                    />
+                    <div className="w-full">
+                        <TextInput
+                            placeholder="Email"
+                            type="email"
+                            value={email}
+                            onChange={setEmail}
+                            additionalClasses="w-full"
+                            title="Enter your email (max 255 characters)"
+                            autocomplete="email"
+                            maxLength={255}
+                        />
+                        {isSignup && <p className="text-xs text-text-light/50 dark:text-text-dark/50 mt-1 text-right">{email.length}/255</p>}
+                    </div>
+                    <div className="w-full">
+                        <TextInput
+                            placeholder="Password"
+                            type="password"
+                            value={password}
+                            onChange={setPassword}
+                            additionalClasses="w-full"
+                            title="Enter your password (max 128 characters)"
+                            autocomplete = {isSignup ? "new-password" : "current-password"}
+                            maxLength={128}
+                        />
+                        {isSignup && <p className="text-xs text-text-light/50 dark:text-text-dark/50 mt-1 text-right">{password.length}/128</p>}
+                    </div>
                     {isSignup && (
                         <TextInput
                             placeholder="Confirm Password"
@@ -136,6 +148,7 @@ export default function Auth() {
                             additionalClasses="w-full "
                             title="Confirm your password"
                             autocomplete="new-password"
+                            maxLength={128}
                         />
                     )}
                     <EnterButton type="submit" title={submitText} text={submitText}/>

@@ -49,6 +49,16 @@ export async function deleteAccountWithToken({ token, email, password, navigate,
         return;
     }
 
+    if (email.length > 255) {
+        setError("Email must be 255 characters or less");
+        return;
+    }
+
+    if (password.length > 128) {
+        setError("Password must be 128 characters or less");
+        return;
+    }
+
     if (!ensureValidEmail(email)) {
         setError("Please enter a valid email address");
         return;

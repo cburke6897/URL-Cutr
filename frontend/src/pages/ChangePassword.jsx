@@ -101,9 +101,10 @@ export default function ChangePassword() {
                         value={newPassword} 
                         onChange={setNewPassword} 
                         additionalClasses="w-full" 
-                        title="Enter your new password"
+                        title="Enter your new password (max 128 characters)"
                         type="password"
                         autocomplete="new-password"
+                        maxLength={128}
                     />
                     <TextInput 
                         placeholder="Confirm Password" 
@@ -113,6 +114,7 @@ export default function ChangePassword() {
                         title="Confirm your new password"
                         type="password"
                         autocomplete="new-password"
+                        maxLength={128}
                     />
                     <EnterButton type="submit" title="Change Password" text="Change Password"/>
                 </form>

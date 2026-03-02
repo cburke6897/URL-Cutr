@@ -34,6 +34,12 @@ const ensureValidPassword = (value) => { // Enforce strong password:
 export async function signup({ email, username, password, confirmPassword, navigate }) {
     if (!email || !username || !password || !confirmPassword) {
         return { error: "One or more fields are empty" };
+    } else if (username.length > 50) {
+        return { error: "Username must be 50 characters or less" };
+    } else if (email.length > 255) {
+        return { error: "Email must be 255 characters or less" };
+    } else if (password.length > 128) {
+        return { error: "Password must be 128 characters or less" };
     } else if (password !== confirmPassword) {
         return { error: "Passwords do not match" };
     } else if (!ensureValidEmail(email)) {
@@ -120,6 +126,9 @@ export async function login({ email, password, navigate }) {
 export async function changeUsername({ email, password, newUsername, navigate, setError }) {
     if (!email || !password || !newUsername) {
         setError("One or more fields are empty");
+        return;
+    } else if (newUsername.length > 50) {
+        setError("Username must be 50 characters or less");
         return;
     } else if (!ensureValidEmail(email)) {
         setError("Invalid email");
