@@ -1,4 +1,4 @@
-export default function ShortenButton({onClick, title = "", text = ""}) {
+export default function EnterButton({onClick, title = "", text = ""}) {
   return (
     <button
       onClick={onClick}
