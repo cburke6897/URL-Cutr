@@ -47,6 +47,7 @@ jobs:
             --resource-group "$RG" \
             --name "$ACI_NAME" \
             --image "$IMAGE" \
+            --os-type Linux \
             --location "centralus" \
             --dns-name-label "$DNS_LABEL" \
             --registry-login-server "${{ secrets.REGISTRY_LOGIN_SERVER }}" \
