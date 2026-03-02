@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, Request
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.cruds.user_crud import create, authenticate_user
-from app.schemas.user_schema import UserCreate, UserLogin, UserResponse
+from app.schemas.user_schema import UserCreate, UserLogin, UserResponse, ChangeUsername
 from app.core.deps import get_current_user
 from app.core.security import create_access_token, create_refresh_token
 from app.cruds.refresh_token_crud import save_refresh_token, refresh_token_exists, delete_refresh_token
@@ -100,6 +100,23 @@ def refresh_token(request: Request, response: Response, db: Session = Depends(ge
     )
 
     return {"access_token": new_access_token, "token_type": "bearer"}
+
+@router.post("/change-username")
+def change_username(payload: ChangeUsername, db: Session = Depends(get_db)):
+    user = authenticate_user(db, payload.email, payload.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    # Check if new username is already taken
+    existing_user = db.query(user.__class__).filter(user.__class__.username == payload.new_username).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already taken")
+
+    user.username = payload.new_username
+    db.commit()
+    db.refresh(user)
+
+    return {"message": "Username changed successfully", "new_username": user.username}
 
 
 @router.get("/me", response_model=UserResponse)
