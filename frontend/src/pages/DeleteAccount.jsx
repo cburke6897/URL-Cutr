@@ -3,13 +3,16 @@ import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
 import DropdownMenu from "../components/DropdownMenu";
+import UsernameLabel from "../components/UsernameLabel";
 import { deleteAccountWithToken } from "../utils/DeleteAccount";
+import { fetchCurrentUser } from "../utils/User";
 
 export default function DeleteAccount() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const location = useLocation();
@@ -37,6 +40,7 @@ export default function DeleteAccount() {
                 }
 
                 await response.json();
+                setUser(await fetchCurrentUser());
                 setLoading(false);
             } catch (err) {
                 navigate(`/?error=${encodeURIComponent("Failed to verify delete token")}`);
@@ -55,6 +59,7 @@ export default function DeleteAccount() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors">
                 <DropdownMenu />
+                {user && <UsernameLabel username={user.username} admin={user.admin} />}
                 <div className="text-text-light dark:text-text-dark text-xl">
                     Verifying token...
                 </div>
@@ -65,6 +70,7 @@ export default function DeleteAccount() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
             <DropdownMenu />
+            {user && <UsernameLabel username={user.username} admin={user.admin} />}
             <div className="min-h-[23.8rem] w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
                 
                 <h1 className="text-text-light dark:text-text-dark text-3xl font-bold mb-4 transition-colors">
