@@ -116,3 +116,47 @@ export async function login({ email, password, navigate }) {
         return { error: "Network error" };
     }
 }
+
+export async function changeUsername({ email, password, newUsername, navigate, setError }) {
+    if (!email || !password || !newUsername) {
+        setError("One or more fields are empty");
+        return;
+    } else if (!ensureValidEmail(email)) {
+        setError("Invalid email");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:8000/change-username", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: email, password: password, new_username: newUsername }),
+        });
+
+        if (!response.ok) {
+            let message = "Unknown error";
+            let errorText = null;
+
+            try {
+                errorText = await response.text();
+                console.error("Error response body:", errorText);
+            } catch (fetchError) {
+                console.error("Failed to read error response text:", fetchError);
+            }
+
+            if (response.status === 401) {
+                message = "Invalid email or password";
+            } else if (response.status === 400) {
+                message = "Username already taken";
+            }
+
+            setError(message);
+            return;
+        }
+
+        await response.json();
+        navigate(`/?success=${encodeURIComponent("Username changed successfully!")}`);
+    } catch (requestError) {
+        setError("Network error");
+    }
+}
