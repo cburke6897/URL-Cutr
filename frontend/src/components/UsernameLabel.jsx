@@ -23,7 +23,7 @@ export default function UsernameLabel({ username = "", admin = false }) {
 	};
 
 	const menuOptions = {
-		"Change Username": () => console.log("Change Username clicked"),
+		"Change Username": () => navigate("/change-username"),
 		"Reset Password": () => navigate("/reset-password"),
 		"Delete Account": handleDeleteAccount,
 	};
