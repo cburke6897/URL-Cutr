@@ -6,10 +6,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout GitHub Action
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Login via Azure CLI
+      - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -22,37 +22,73 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Build and push image
+        shell: bash
         run: |
           set -euo pipefail
-          docker build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }} backend
-          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
+          IMAGE="${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}"
+          docker build -t "$IMAGE" backend
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
 
-      - name: Deploy to Azure Container Instances (CLI)
+      - name: Deploy to Azure Container Instances (ACI)
         shell: bash
         run: |
           set -euo pipefail
 
           RG="${{ secrets.RESOURCE_GROUP }}"
-          ACI_NAME="aci-cutr"
-          IMAGE="${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}"
+          ACI_NAME="${{ secrets.ACI_NAME || 'aci-cutr' }}"
+          LOCATION="${{ secrets.LOCATION || 'centralus' }}"
+          IMAGE="${IMAGE}"
 
-          # ACI DNS label rules are strict; sanitize + keep under 63 chars.
-          DNS_RAW="${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}"
+          # DNS label rules are strict; sanitize + keep under 63 chars.
+          DNS_RAW="${RG}-${{ github.run_number }}"
           DNS_LABEL="$(echo "$DNS_RAW" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-' | cut -c1-63)"
 
-          # Recreate to ensure image updates apply reliably
-          az container delete --resource-group "$RG" --name "$ACI_NAME" --yes || true
+          # Recreate so image/env updates apply reliably
+          az container delete -g "$RG" -n "$ACI_NAME" --yes || true
 
           az container create \
-            --resource-group "$RG" \
-            --name "$ACI_NAME" \
+            -g "$RG" \
+            -n "$ACI_NAME" \
+            -l "$LOCATION" \
             --image "$IMAGE" \
             --os-type Linux \
-            --location "centralus" \
             --dns-name-label "$DNS_LABEL" \
             --registry-login-server "${{ secrets.REGISTRY_LOGIN_SERVER }}" \
             --registry-username "${{ secrets.REGISTRY_USERNAME }}" \
             --registry-password "${{ secrets.REGISTRY_PASSWORD }}" \
             --ports 8000 \
             --cpu 1 \
-            --memory 1.5
+            --memory 1.5 \
+            --restart-policy Always \
+            --secure-environment-variables \
+              DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+              REDIS_URL="${{ secrets.REDIS_URL }}" \
+              ACCESS_TOKEN_SECRET_KEY="${{ secrets.ACCESS_TOKEN_SECRET_KEY }}" \
+              REFRESH_TOKEN_SECRET_KEY="${{ secrets.REFRESH_TOKEN_SECRET_KEY }}" \
+              RESEND_API_KEY="${{ secrets.RESEND_API_KEY }}" \
+              SUPPORT_EMAIL="${{ secrets.SUPPORT_EMAIL }}" \
+              FRONTEND_URL="${{ secrets.FRONTEND_URL }}"
+
+      - name: Show ACI events + crash reason
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          RG="${{ secrets.RESOURCE_GROUP }}"
+          ACI_NAME="${{ secrets.ACI_NAME || 'aci-cutr' }}"
+
+          az container show -g "$RG" -n "$ACI_NAME" \
+            --query "{state:instanceView.state, events:instanceView.events}" -o yaml || true
+
+          az container show -g "$RG" -n "$ACI_NAME" \
+            --query "instanceView.containers[0].instanceView.previousState" -o yaml || true
+
+      - name: Show container logs (stdout/stderr)
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          RG="${{ secrets.RESOURCE_GROUP }}"
+          ACI_NAME="${{ secrets.ACI_NAME || 'aci-cutr' }}"
+          az container logs -g "$RG" -n "$ACI_NAME" || true
