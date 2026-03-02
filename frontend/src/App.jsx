@@ -5,6 +5,7 @@ import { Routes, Route } from 'react-router-dom';
 import ResetPassword from "./pages/ResetPassword";
 import ChangePassword from "./pages/ChangePassword";
 import DeleteAccount from "./pages/DeleteAccount";
+import ChangeUsername from "./pages/ChangeUsername";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/change-password" element={<ChangePassword />} />
       <Route path="/delete-account" element={<DeleteAccount />} />
+      <Route path="/change-username" element={<ChangeUsername />} />
     </Routes>
   );
 }
