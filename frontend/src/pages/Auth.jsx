@@ -54,10 +54,19 @@ export default function Auth() {
         }
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            handleSubmit();
+        }
+    };
+
     return (
         <div className="min-h-screen flex justify-center items-start bg-bg-light dark:bg-bg-dark transition-colors p-4 pt-[7.5%]">
         <DropdownMenu />
-        <div className="min-h-104 w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-6 rounded-xl shadow-lg text-center transition-colors">
+        <div 
+            className="min-h-104 w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-6 rounded-xl shadow-lg text-center transition-colors"
+            onKeyDown={handleKeyDown}
+        >
             <h1 className="text-text-light dark:text-text-dark text-3xl font-bold mb-2 transition-colors">
             {isSignup ? "Create your account" : "Welcome back"}
             </h1>

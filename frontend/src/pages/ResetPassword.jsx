@@ -43,11 +43,20 @@ export default function ResetPassword() {
     setMessage(result.message || "If the email is registered, a reset link has been sent.");
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleResetPassword();
+    }
+  };
+
   return (
     <div className="min-h-screen flex justify-center items-start bg-bg-light dark:bg-bg-dark transition-colors p-4 pt-[7.5%]">
       {user && <UsernameLabel username={user.username} admin={user.admin} />}
       <DropdownMenu />
-      <div className="w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
+      <div 
+        className="w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors"
+        onKeyDown={handleKeyDown}
+      >
         <label className="block text-text-light dark:text-text-dark text-3xl font-bold mb-6 transition-colors">
           Password Reset
         </label>

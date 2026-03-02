@@ -27,11 +27,20 @@ export default function ChangeUsername() {
         await changeUsername({ email, password, newUsername, navigate, setError });
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            handleChangeUsername();
+        }
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
             <DropdownMenu />
             {user && <UsernameLabel username={user.username} admin={user.admin} />}
-            <div className="min-h-[23.8rem] w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
+            <div 
+                className="min-h-[23.8rem] w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors"
+                onKeyDown={handleKeyDown}
+            >
                 <h1 className="text-text-light dark:text-text-dark text-3xl font-bold mb-4 transition-colors">
                     Change Username
                 </h1>
