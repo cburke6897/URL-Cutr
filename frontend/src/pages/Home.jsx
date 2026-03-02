@@ -5,6 +5,7 @@ import CopyButton from "../components/CopyButton";
 import LinkExpirerDropdown from "../components/LinkExpirerDropdown";
 import DropdownMenu from "../components/DropdownMenu";
 import UsernameLabel from "../components/UsernameLabel";
+import InfoCard from "../components/InfoCard";
 import { fetchCurrentUser } from "../utils/User";
 import { shortenUrl } from "../utils/Url";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -116,6 +117,7 @@ export default function Home() {
           </p>
         )}
       </div>
+      <InfoCard />
     </div>
   );
 }
