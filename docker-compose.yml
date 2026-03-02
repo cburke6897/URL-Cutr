@@ -9,31 +9,29 @@ services:
     depends_on:
       - db
       - redis
+    networks:
+      - internal
   
   db:
     image: postgres:18.1
     container_name: cutr-db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: cutr_db
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
+    networks:
+      - internal
 
   redis:
     image: redis:8.6
     container_name: cutr-redis
-    command: 
-      [
-        "redis-server", 
-        "--requirepass", "${REDIS_PASSWORD}",
-        "--bind", "0.0.0.0",
-        "protected-mode", "yes"
-      ]
-    environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     networks:
       - internal
     restart: always
@@ -45,6 +43,8 @@ services:
       - "8080:8080"
     depends_on:
       - db
+    networks:
+      - internal
 
 volumes:
   postgres_data:
