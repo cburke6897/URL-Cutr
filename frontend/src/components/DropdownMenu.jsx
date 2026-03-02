@@ -4,7 +4,9 @@ import { logout } from "../utils/Auth";
 
 export default function DropdownMenu() {
   const [open, setOpen] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
   const menuRef = useRef(null);
+  const focusedIndexRef = useRef(-1);
   const [theme, setTheme] = useState(
     localStorage.getItem("theme") || "dark"
   );
@@ -40,9 +42,15 @@ export default function DropdownMenu() {
   };
 
   useEffect(() => {
+    focusedIndexRef.current = focusedIndex;
+  }, [focusedIndex]);
+
+  useEffect(() => {
     if (!open) {
       return undefined;
     }
+
+    setFocusedIndex(-1); // Reset focus to nothing when menu opens
 
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -50,8 +58,57 @@ export default function DropdownMenu() {
       }
     };
 
+    const handleKeyDown = (event) => {
+      const token = localStorage.getItem("token");
+      let currentMenuOptions;
+      
+      if (token) {
+        currentMenuOptions = {
+          Home: () => navigate("/"),
+          Dashboard: () => navigate("/dashboard"),
+          "Toggle Theme": toggleTheme,
+          "Sign out": async () => await logout(navigate, location, token),
+        };
+      } else {
+        currentMenuOptions = {
+          Home: () => navigate("/"),
+          "Toggle Theme": toggleTheme,
+          "Sign in": () => navigate("/auth"),
+        };
+      }
+
+      const menuOptionsArray = Object.entries(currentMenuOptions);
+      const maxIndex = menuOptionsArray.length - 1;
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setFocusedIndex((prev) => {
+          if (prev === -1) return 0;
+          return prev < maxIndex ? prev + 1 : 0;
+        });
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setFocusedIndex((prev) => {
+          if (prev === -1) return maxIndex;
+          return prev > 0 ? prev - 1 : maxIndex;
+        });
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        if (focusedIndexRef.current >= 0) {
+          const [, action] = menuOptionsArray[focusedIndexRef.current];
+          handleOptionClick(action);
+        }
+      } else if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [open]);
 
   useEffect(() => {
@@ -88,11 +145,16 @@ export default function DropdownMenu() {
           id="hamburger-menu"
           className="w-44 rounded-lg bg-surface-light dark:bg-surface-dark shadow-lg border border-border-subtle dark:border-border-subtle-dark overflow-hidden"
         >
-          {Object.entries(menuOptions).map(([label, action]) => (
+          {Object.entries(menuOptions).map(([label, action], index) => (
             <button
               key={label}
               onClick={() => handleOptionClick(action)}
-              className="w-full px-4 py-2 text-left text-sm text-text-light dark:text-text-dark hover:bg-hover-overlay dark:hover:bg-hover-overlay-dark"
+              onMouseEnter={() => setFocusedIndex(index)}
+              className={`w-full px-4 py-2 text-left text-sm text-text-light dark:text-text-dark transition-colors ${
+                index === focusedIndex
+                  ? "bg-hover-overlay dark:bg-hover-overlay-dark"
+                  : "hover:bg-hover-overlay dark:hover:bg-hover-overlay-dark"
+              }`}
             >
               {label}
             </button>

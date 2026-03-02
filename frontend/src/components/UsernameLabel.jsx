@@ -6,9 +6,11 @@ import AlertModal from "./AlertModal";
 
 export default function UsernameLabel({ username = "", admin = false }) {
 	const [open, setOpen] = useState(false);
+	const [focusedIndex, setFocusedIndex] = useState(-1);
 	const [alertMessage, setAlertMessage] = useState("");
 	const [isAlertError, setIsAlertError] = useState(false);
 	const menuRef = useRef(null);
+	const focusedIndexRef = useRef(-1);
 	const navigate = useNavigate();
 
 	const handleDeleteAccount = async () => {
@@ -34,9 +36,15 @@ export default function UsernameLabel({ username = "", admin = false }) {
 	};
 
 	useEffect(() => {
+		focusedIndexRef.current = focusedIndex;
+	}, [focusedIndex]);
+
+	useEffect(() => {
 		if (!open) {
 			return undefined;
 		}
+
+		setFocusedIndex(-1); // Reset focus to nothing when menu opens
 
 		const handleClickOutside = (event) => {
 			if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -44,8 +52,45 @@ export default function UsernameLabel({ username = "", admin = false }) {
 			}
 		};
 
+		const handleKeyDown = (event) => {
+			const currentMenuOptions = {
+				"Change Username": () => navigate("/change-username"),
+				"Reset Password": () => navigate("/reset-password"),
+				"Delete Account": handleDeleteAccount,
+			};
+
+			const menuOptionsArray = Object.entries(currentMenuOptions);
+			const maxIndex = menuOptionsArray.length - 1;
+
+			if (event.key === "ArrowDown") {
+				event.preventDefault();
+				setFocusedIndex((prev) => {
+					if (prev === -1) return 0;
+					return prev < maxIndex ? prev + 1 : 0;
+				});
+			} else if (event.key === "ArrowUp") {
+				event.preventDefault();
+				setFocusedIndex((prev) => {
+					if (prev === -1) return maxIndex;
+					return prev > 0 ? prev - 1 : maxIndex;
+				});
+			} else if (event.key === "Enter") {
+				event.preventDefault();
+				if (focusedIndexRef.current >= 0) {
+					const [, action] = menuOptionsArray[focusedIndexRef.current];
+					handleOptionClick(action);
+				}
+			} else if (event.key === "Escape") {
+				setOpen(false);
+			}
+		};
+
 		document.addEventListener("mousedown", handleClickOutside);
-		return () => document.removeEventListener("mousedown", handleClickOutside);
+		document.addEventListener("keydown", handleKeyDown);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+			document.removeEventListener("keydown", handleKeyDown);
+		};
 	}, [open]);
 
 	return (
@@ -70,11 +115,16 @@ export default function UsernameLabel({ username = "", admin = false }) {
 
 			{open && (
 				<div className="absolute top-full left-0 mt-2 w-44 rounded-lg bg-surface-light dark:bg-surface-dark shadow-lg border border-border-subtle dark:border-border-subtle-dark overflow-hidden">
-					{Object.entries(menuOptions).map(([label, action]) => (
+					{Object.entries(menuOptions).map(([label, action], index) => (
 						<button
 							key={label}
 							onClick={() => handleOptionClick(action)}
-							className="w-full px-4 py-2 text-left text-sm text-text-light dark:text-text-dark hover:bg-hover-overlay dark:hover:bg-hover-overlay-dark"
+							onMouseEnter={() => setFocusedIndex(index)}
+							className={`w-full px-4 py-2 text-left text-sm text-text-light dark:text-text-dark transition-colors ${
+								index === focusedIndex
+									? "bg-hover-overlay dark:bg-hover-overlay-dark"
+									: "hover:bg-hover-overlay dark:hover:bg-hover-overlay-dark"
+							}`}
 						>
 							{label}
 						</button>
