@@ -28,10 +28,10 @@ jobs:
         uses: azure/aci-deploy@v1
         with:
           resource-group: ${{ secrets.RESOURCE_GROUP }}
-          dns-name-label: aci-sampleapp-${{ github.run_number }}
           image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
           registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
           registry-username: ${{ secrets.REGISTRY_USERNAME }}
           registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-          name: aci-sampleapp
+          name: aci-sampleapp-${{ github.run_number }}
+          dns-name-label: aci-sampleapp-${{ github.run_number }}          
           location: centralus
