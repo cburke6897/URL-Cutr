@@ -86,3 +86,6 @@
 html, body {
   overscroll-behavior: none;
 }
+
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }
