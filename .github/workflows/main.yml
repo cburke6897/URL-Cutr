@@ -53,6 +53,6 @@ jobs:
             --registry-login-server "${{ secrets.REGISTRY_LOGIN_SERVER }}" \
             --registry-username "${{ secrets.REGISTRY_USERNAME }}" \
             --registry-password "${{ secrets.REGISTRY_PASSWORD }}" \
-            --ports 80 \
+            --ports 8000 \
             --cpu 1 \
             --memory 1.5
