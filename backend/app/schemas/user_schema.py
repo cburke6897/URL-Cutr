@@ -10,6 +10,11 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+class ChangeUsername(BaseModel):
+    email: EmailStr
+    password: str
+    new_username: str
+
 class UserResponse(BaseModel):
     id: int
     username: str
