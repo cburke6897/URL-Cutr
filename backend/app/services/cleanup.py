@@ -19,7 +19,7 @@ def delete_expired_urls():
     db = SessionLocal()
     try:
         # Query the database for URLs that have a delete_at timestamp in the past
-        expired_urls = db.query(URL).filter(URL.delete_at != None, URL.delete_at < datetime.now(timezone.utc)).all()
+        expired_urls = db.query(URL).filter(URL.delete_at.isnot(None), URL.delete_at < datetime.now(timezone.utc)).all()
         for url in expired_urls:
             print(f"Deleting expired URL: {url.original_url} (code: {url.code})")
             db.delete(url)

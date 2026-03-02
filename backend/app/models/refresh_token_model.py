@@ -9,7 +9,7 @@ class RefreshToken(Base):
     
     id = Column(BigInteger, primary_key=True, index=True)
     user_id = Column(BigInteger, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    token = Column(String, unique=True, index=True, nullable=False)
+    token = Column(String(500), unique=True, index=True, nullable=False)
     expires_at = Column(DateTime, nullable=False)
 
     user = relationship("User")

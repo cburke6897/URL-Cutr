@@ -5,7 +5,7 @@ class ResetToken(Base):
     __tablename__ = "reset_tokens"
 
     id = Column(BigInteger, primary_key=True, index=True)
-    user_email = Column(String, nullable=False)
-    token = Column(String, unique=True, index=True, nullable=False)
+    user_email = Column(String(255), nullable=False)
+    token = Column(String(255), unique=True, index=True, nullable=False)
     expires_at = Column(DateTime(timezone=True), nullable=False)
     created_at = Column(DateTime(timezone=True), default= func.now())
