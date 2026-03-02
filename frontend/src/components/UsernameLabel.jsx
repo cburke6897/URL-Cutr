@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { sendDeleteAccountEmail } from "../utils/DeleteAccount";
 import AlertModal from "./AlertModal";
@@ -12,6 +12,7 @@ export default function UsernameLabel({ username = "", admin = false }) {
 	const menuRef = useRef(null);
 	const focusedIndexRef = useRef(-1);
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	const handleDeleteAccount = async () => {
 		const result = await sendDeleteAccountEmail();
@@ -27,8 +28,11 @@ export default function UsernameLabel({ username = "", admin = false }) {
 	const menuOptions = {
 		"Change Username": () => navigate("/change-username"),
 		"Reset Password": () => navigate("/reset-password"),
-		"Delete Account": handleDeleteAccount,
 	};
+
+	if (!location.pathname.includes("/delete-account")) {
+		menuOptions["Delete Account"] = handleDeleteAccount;
+	}
 
 	const handleOptionClick = (action) => {
 		action();
