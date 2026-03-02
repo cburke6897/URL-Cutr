@@ -25,8 +25,18 @@ services:
   redis:
     image: redis:8.6
     container_name: cutr-redis
-    ports:
-      - "6379:6379"
+    command: 
+      [
+        "redis-server", 
+        "--requirepass", "${REDIS_PASSWORD}",
+        "--bind", "0.0.0.0",
+        "protected-mode", "yes"
+      ]
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      - internal
+    restart: always
 
   adminer: 
     image: adminer:5.4.2
@@ -39,3 +49,6 @@ services:
 volumes:
   postgres_data:
 
+networks:
+  internal:
+    driver: bridge
