@@ -71,7 +71,7 @@ jobs:
 
           IMAGE="${IMAGE}"
 
-          DNS_RAW="${{ github.event.repository.name }}-${{ github.run_number }}"
+          DNS_RAW="${{ github.event.repository.name }}"
           DNS_LABEL="$(echo "$DNS_RAW" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-' | sed 's/^-*//; s/-*$//' | cut -c1-63)"
 
           echo "RG=$RG"
