@@ -22,7 +22,8 @@ async def lifespan(app: FastAPI):
     # Create database tables based on the defined models
     Base.metadata.create_all(bind=engine)
     yield
-
+    
+logging.info("BUILD MARKER: 2026-03-02-0001")
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(shorten_router)
