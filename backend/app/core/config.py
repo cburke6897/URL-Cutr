@@ -14,3 +14,4 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 settings = Settings()
+print("REDIS_URL RAW VALUE:", repr(settings.redis_url))
