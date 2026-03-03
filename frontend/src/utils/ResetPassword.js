@@ -1,3 +1,5 @@
+import Settings from "./Settings";
+
 const ensureValidPassword = (value) => {
     // Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~])[A-Za-z\d!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]{8,}$/;        
@@ -23,7 +25,7 @@ export async function resetPassword(email) {
     }
 
     try {
-        const response = await fetch("http://localhost:8000/send-reset-password-email", {
+        const response = await fetch(`${Settings.BACKEND_URL}/send-reset-password-email`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -68,7 +70,7 @@ export async function changePasswordWithToken({ token, newPassword, confirmPassw
     }
 
     try {
-        const response = await fetch("http://localhost:8000/reset-password", {
+        const response = await fetch(`${Settings.BACKEND_URL}/reset-password`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

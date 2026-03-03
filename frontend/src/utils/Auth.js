@@ -1,5 +1,7 @@
+import Settings from "./Settings";
+
 export async function logout(navigate, location, token) {
-    const response = await fetch("http://localhost:8000/logout", {
+    const response = await fetch(`${Settings.BACKEND_URL}/logout`, {
         method: "POST",
         credentials: "include",
         headers: {

@@ -1,5 +1,7 @@
+import Settings from "./Settings";
+
 export async function refreshAccessToken() { // Function to refresh access token using refresh token stored in HTTP-only cookie
-    const response = await fetch("http://localhost:8000/refresh", {
+    const response = await fetch(`${Settings.BACKEND_URL}/refresh`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

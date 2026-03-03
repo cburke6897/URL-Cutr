@@ -7,6 +7,7 @@ import UsernameLabel from "../components/UsernameLabel";
 import InfoCard from "../components/InfoCard";
 import { deleteAccountWithToken } from "../utils/DeleteAccount";
 import { fetchCurrentUser } from "../utils/User";
+import Settings from "../utils/Settings";
 
 export default function DeleteAccount() {
     const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ export default function DeleteAccount() {
             }
 
             try {
-                const response = await fetch("http://localhost:8000/verify-delete-token", {
+                const response = await fetch(`${Settings.BACKEND_URL}/verify-delete-token`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

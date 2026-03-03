@@ -8,6 +8,7 @@ import { fetchCurrentUser } from "../utils/User";
 import { authFetch } from "../utils/RefreshToken";
 import DeleteButton from "../components/DeleteButton";
 import { deleteUrl } from "../utils/Url";
+import Settings from "../utils/Settings";
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -56,7 +57,7 @@ export default function Dashboard() {
     const fetchUserUrls = async (token) => {
         try {
             setLoading(true);
-            const response = await authFetch("http://localhost:8000/my-urls", {
+            const response = await authFetch(`${Settings.BACKEND_URL}/my-urls`, {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json",

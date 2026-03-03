@@ -1,10 +1,11 @@
 import { authFetch } from "./RefreshToken";
+import Settings from "./Settings";
 
 export async function fetchCurrentUser() { // Function to fetch current user data using access token stored in localStorage, returns null if not authenticated or on error
     const token = localStorage.getItem("token");
       
       if (token){
-        const response = await authFetch("http://localhost:8000/me", {
+        const response = await authFetch(`${Settings.BACKEND_URL}/me`, {
           headers: {
             "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 import { fetchCurrentUser } from "./User";
 import { logout } from "./Auth";
+import Settings from "./Settings";
 
 const ensureValidEmail = (value) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -17,7 +18,7 @@ export async function sendDeleteAccountEmail() {
 
         const email = user.email;
 
-        const response = await fetch("http://localhost:8000/send-delete-account-email", {
+        const response = await fetch(`${Settings.BACKEND_URL}/send-delete-account-email`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -65,7 +66,7 @@ export async function deleteAccountWithToken({ token, email, password, navigate,
     }
 
     try {
-        const response = await fetch("http://localhost:8000/delete-account", {
+        const response = await fetch(`${Settings.BACKEND_URL}/delete-account`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -6,6 +6,7 @@ import DropdownMenu from "../components/DropdownMenu";
 import InfoCard from "../components/InfoCard";
 import { changePasswordWithToken } from "../utils/ResetPassword";
 import { logout } from "../utils/Auth";
+import Settings from "../utils/Settings";
 
 export default function ChangePassword() {
     const [newPassword, setNewPassword] = useState("");
@@ -27,7 +28,7 @@ export default function ChangePassword() {
             }
             
             try {
-                const response = await fetch("http://localhost:8000/verify-reset-token", {
+                const response = await fetch(`${Settings.BACKEND_URL}/verify-reset-token`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
