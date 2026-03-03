@@ -14,4 +14,4 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 settings = Settings()
-logging.info("REDIS_URL RAW VALUE: %r", settings.redis_url
+logging.info("REDIS_URL RAW VALUE: %r", settings.redis_url)
