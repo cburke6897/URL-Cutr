@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+import logging
 
 # Configuration class to load settings from environment variables
 class Settings(BaseSettings):
