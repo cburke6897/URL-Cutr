@@ -51,7 +51,7 @@ export async function signup({ email, username, password, confirmPassword, navig
     }
 
     try {
-        const response = await fetch("http://localhost:8000/signup", {
+        const response = await fetch(`${Settings.BACKEND_URL}/signup`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, username, password }),
@@ -91,7 +91,7 @@ export async function login({ email, password, navigate }) {
     }
 
     try {
-        const response = await fetch("http://localhost:8000/login", {
+        const response = await fetch(`${Settings.BACKEND_URL}/login`, {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
@@ -138,7 +138,7 @@ export async function changeUsername({ email, password, newUsername, navigate, s
     }
 
     try {
-        const response = await fetch("http://localhost:8000/change-username", {
+        const response = await fetch(`${Settings.BACKEND_URL}/change-username`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: email, password: password, new_username: newUsername }),
