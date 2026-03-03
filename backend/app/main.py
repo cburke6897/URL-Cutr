@@ -1,4 +1,4 @@
-import asyncio, logging
+import asyncio
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,9 +22,6 @@ async def lifespan(app: FastAPI):
     # Create database tables based on the defined models
     Base.metadata.create_all(bind=engine)
     yield
-
-logger = logging.getLogger("uvicorn.error")
-logger.info("BUILD MARKER: 2026-03-02-0001")
 
 app = FastAPI(lifespan=lifespan)
 

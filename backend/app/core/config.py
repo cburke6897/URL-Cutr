@@ -1,5 +1,4 @@
 from pydantic_settings import BaseSettings
-import logging
 
 # Configuration class to load settings from environment variables
 class Settings(BaseSettings):
@@ -15,6 +14,3 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 settings = Settings()
-
-logger = logging.getLogger("uvicorn.error")
-logger.info("REDIS_URL RAW VALUE: %r", settings.redis_url)
