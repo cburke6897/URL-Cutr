@@ -15,4 +15,6 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 settings = Settings()
-logging.info("REDIS_URL RAW VALUE: %r", settings.redis_url)
+
+logger = logging.getLogger("uvicorn.error")
+logger.info("REDIS_URL RAW VALUE: %r", settings.redis_url)
