@@ -6,11 +6,14 @@ from app.schemas.url_schema import URLCreate, URLResponse
 from app.cruds import url_crud
 from app.db.session import get_db
 from app.services.shortener import generate_code
+from app.services.cleanup import delete_expired
 from app.services.rate_limit import rate_limit
 from app.core.tlds import is_valid_tld
 from app.core.deps import get_current_user, get_current_user_optional
 from app.core.config import settings
+import time, random
 
+last_cleanup = 0
 
 router = APIRouter()
 
@@ -81,6 +84,13 @@ def redirect(code: str, db: Session = Depends(get_db)):
     # If the original URL is not cached, retrieve it from the database, cache it in Redis, and redirect to it
     original_url = url.original_url
     redis_client.set(f"url:{code}", original_url)
+
+    # Implement a random cleanup mechanism to delete expired URLs from the database, which runs with a 10% chance on each redirect and only if it's been more than an hour since the last cleanup
+    now = time.time()
+    if (random.random() < 0.1 and now - last_cleanup > 3600):  # 10% chance to trigger cleanup, and only if it's been more than an hour since the last cleanup
+        delete_expired()
+        last_cleanup = now
+
     return RedirectResponse(original_url, status_code=302)
 
 @router.get("/my-urls", response_model=list[URLResponse])
