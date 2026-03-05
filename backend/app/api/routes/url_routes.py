@@ -85,9 +85,9 @@ def redirect(code: str, db: Session = Depends(get_db)):
     original_url = url.original_url
     redis_client.set(f"url:{code}", original_url)
 
-    # Implement a random cleanup mechanism to delete expired URLs from the database, which runs with a 10% chance on each redirect and only if it's been more than an hour since the last cleanup
+    # Implement a random cleanup mechanism to delete expired URLs from the database
     now = time.time()
-    if (random.random() < 0.1 and now - last_cleanup > 3600):  # 10% chance to trigger cleanup, and only if it's been more than an hour since the last cleanup
+    if (random.random() < 0.05 and now - last_cleanup > 3600):  # 5% chance to trigger cleanup, and only if it's been more than an hour since the last cleanup
         delete_expired()
         last_cleanup = now
 
