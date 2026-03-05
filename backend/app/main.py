@@ -10,17 +10,15 @@ from app.api.routes.reset_routes import router as reset_router
 from app.api.routes.delete_routes import router as delete_router
 from app.core.config import settings
 from app.core.tlds import load_tlds
-from app.services.cleanup import delete_expired_urls_periodically
+from app.services.cleanup import delete_expired
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Load valid TLDs at startup
-    await load_tlds()
-    # Start the periodic cleanup task to delete expired URLs
-    asyncio.create_task(delete_expired_urls_periodically())
     # Create database tables based on the defined models
     Base.metadata.create_all(bind=engine)
+    delete_expired()
     yield
 
 app = FastAPI(lifespan=lifespan)
