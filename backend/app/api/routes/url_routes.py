@@ -76,14 +76,16 @@ def redirect(code: str, db: Session = Depends(get_db)):
     url.clicks += 1
     db.commit()
 
-    # Check if the original URL is cached in Redis using the code as the key
-    cached_url = redis_client.get(f"url:{code}")
-    if cached_url:
-        return RedirectResponse(cached_url, status_code=302)
+    if redis_client:
+        # Check if the original URL is cached in Redis using the code as the key
+        cached_url = redis_client.get(f"url:{code}")
+        if cached_url:
+            return RedirectResponse(cached_url, status_code=302)
     
     # If the original URL is not cached, retrieve it from the database, cache it in Redis, and redirect to it
     original_url = url.original_url
-    redis_client.set(f"url:{code}", original_url)
+    if redis_client:
+        redis_client.set(f"url:{code}", original_url)
 
     # Implement a random cleanup mechanism to delete expired URLs from the database
     now = time.time()
