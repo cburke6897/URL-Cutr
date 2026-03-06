@@ -8,14 +8,11 @@ from app.api.routes.auth_routes import router as auth_router
 from app.api.routes.reset_routes import router as reset_router
 from app.api.routes.delete_routes import router as delete_router
 from app.core.config import settings
-from app.core.tlds import load_tlds
 from app.services.cleanup import delete_expired
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Load valid TLDs at startup
-    await load_tlds()
     # Deletes expired data on startup
     delete_expired()
     yield
