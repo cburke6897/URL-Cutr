@@ -9,6 +9,17 @@ import DeleteButton from "../components/DeleteButton";
 import { deleteUrl } from "../utils/Url";
 import Settings from "../utils/Settings";
 
+const getUrlsPerPage = () => {
+    if (typeof window === "undefined") return 7;
+
+    const { innerWidth: width, innerHeight: height } = window;
+
+    if (width < 640 || height < 700) return 4;
+    if (width < 1024 || height < 820) return 6;
+    if (width < 1440 || height < 940) return 7;
+    return 9;
+};
+
 export default function Dashboard() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -16,7 +27,7 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const urlsPerPage = 7;
+    const [urlsPerPage, setUrlsPerPage] = useState(getUrlsPerPage);
 
     useEffect(() => {
         async function init() {
@@ -53,6 +64,19 @@ export default function Dashboard() {
         };
     }, []);
 
+    useEffect(() => {
+        const handleResize = () => {
+            const nextUrlsPerPage = getUrlsPerPage();
+            setUrlsPerPage((prev) => (prev === nextUrlsPerPage ? prev : nextUrlsPerPage));
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
     const fetchUserUrls = async (token) => {
         try {
             setLoading(true);
@@ -86,6 +110,10 @@ export default function Dashboard() {
     const totalPages = Math.max(1, Math.ceil(urls.length / urlsPerPage));
     const startIndex = (currentPage - 1) * urlsPerPage;
     const currentUrls = urls.slice(startIndex, startIndex + urlsPerPage);
+
+    useEffect(() => {
+        setCurrentPage((prev) => Math.min(prev, totalPages));
+    }, [totalPages]);
 
     return (
         <div className="h-dvh overflow-hidden bg-bg-light dark:bg-bg-dark transition-colors">
