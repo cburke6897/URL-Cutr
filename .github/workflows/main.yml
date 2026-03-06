@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "backend/**"
-      - ".github/workflows/Linux_Container_Workflow.yml"
+      - ".github/workflows/main.yml"
 
 jobs:
   build-and-deploy:
