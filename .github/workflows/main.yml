@@ -58,6 +58,19 @@ jobs:
           docker push "$IMAGE"
           echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
 
+      - name: Get runner public IP
+        id: ip
+        run: echo "ip=$(curl -s https://api.ipify.org)" >> $GITHUB_OUTPUT
+
+      - name: Allow GitHub runner IP in Azure SQL firewall
+        run: |
+          az sql server firewall-rule create \
+            --resource-group ${{ secrets.RESOURCE_GROUP }} \
+            --server cutr-sql \
+            --name github-runner \
+            --start-ip-address ${{ steps.ip.outputs.ip }} \
+            --end-ip-address ${{ steps.ip.outputs.ip }}
+
       - name: Run Alembic migrations in container
         shell: bash
         env:
@@ -106,6 +119,14 @@ jobs:
             --environment-variables DATABASE_URL="${{ secrets.DATABASE_URL }}" \
             --command-line "sh -c 'set -eux; echo BOOT; python -V; python -c \"import pyodbc; print(pyodbc.drivers())\"; odbcinst -q -d || true; echo STARTING; exec uvicorn app.main:app --host 0.0.0.0 --port 8000'"
 
+      - name: Remove GitHub runner firewall rule
+        if: always()
+        run: |
+          az sql server firewall-rule delete \
+            --resource-group ${{ secrets.RESOURCE_GROUP }} \
+            --server cutr-sql \
+            --name github-runner
+      
       - name: Show ACI state + events + previousState
         if: always()
         shell: bash
