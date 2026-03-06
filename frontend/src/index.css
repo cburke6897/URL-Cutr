@@ -99,3 +99,14 @@ body {
 
 :root { color-scheme: light; }
 .dark { color-scheme: dark; }
+
+/* Global pressed-state darkening for clickable controls across all pages. */
+:where(button, [role="button"], select):active:not(:disabled) {
+  filter: brightness(0.86);
+}
+
+/* Keep native dropdown options visibly darker when an item is selected/pressed. */
+select option:checked,
+select option:active {
+  filter: brightness(0.86);
+}
