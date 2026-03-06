@@ -8,7 +8,7 @@ export default function DropdownMenu() {
   const menuRef = useRef(null);
   const focusedIndexRef = useRef(-1);
   const [theme, setTheme] = useState(
-    localStorage.getItem("theme") || "dark"
+    localStorage.getItem("theme") || "light"
   );
 
   const token = localStorage.getItem("token");
