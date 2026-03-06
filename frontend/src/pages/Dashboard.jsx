@@ -117,7 +117,7 @@ export default function Dashboard() {
                             {currentUrls.map((url, index) => (
                                 <div 
                                     key={url.id || url.code} 
-                                    className="bg-bg-light dark:bg-bg-dark rounded-lg px-4 py-2 border border-border dark:border-border-dark transition-colors flex items-center gap-4"
+                                    className="bg-bg-light dark:bg-bg-dark rounded-lg px-3 py-2 sm:px-4 sm:py-3 lg:px-5 lg:py-4 border border-border dark:border-border-dark transition-colors flex items-center gap-2 sm:gap-3 lg:gap-4 min-h-16 sm:min-h-20 lg:min-h-24"
                                 >
                                     <div className="w-8 text-text-light dark:text-text-dark font-semibold">
                                         {startIndex + index + 1}.
@@ -140,24 +140,33 @@ export default function Dashboard() {
                                             href={url.original_url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-text-muted dark:text-text-muted-dark text-sm truncate block hover:text-link dark:hover:text-link-dark"
+                                            className="text-text-muted dark:text-text-muted-dark text-sm truncate hidden sm:block hover:text-link dark:hover:text-link-dark"
                                             title={url.original_url}
                                         >
                                             {url.original_url}
                                         </a>
                                     </div>
 
-                                    <div className="flex items-center gap-4 text-sm text-text-light dark:text-text-dark whitespace-nowrap">
+                                    <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 text-xs sm:text-sm text-text-light dark:text-text-dark whitespace-nowrap">
                                         <span className="w-20">Clicks: {url.clicks}</span>
-                                        <span className="w-48 text-xs text-text-muted dark:text-text-muted-dark">
+                                        <span className="hidden lg:block w-48 text-xs text-text-muted dark:text-text-muted-dark">
                                             Created: {formatDate(url.created_at)}
                                         </span>
-                                        <span className="w-48 text-xs text-text-muted dark:text-text-muted-dark">
+                                        <span className="hidden lg:block w-48 text-xs text-text-muted dark:text-text-muted-dark">
                                             Expires: {formatDate(url.delete_at)}
                                         </span>
                                         
-                                        <CopyButton text={url.short_url} />
-                                        <DeleteButton onClick={() => deleteUrl(navigate, url.code)} title="Delete URL" />
+                                        <CopyButton
+                                            text={url.short_url}
+                                            className="h-8 px-2 py-1 sm:h-9 sm:px-3 sm:py-2 lg:h-10 lg:px-4 lg:py-2 ml-0"
+                                            iconClassName="h-4 w-4 sm:h-4 sm:w-4 lg:h-5 lg:w-5"
+                                        />
+                                        <DeleteButton
+                                            onClick={() => deleteUrl(navigate, url.code)}
+                                            title="Delete URL"
+                                            className="h-8 px-2 py-1 sm:h-9 sm:px-3 sm:py-2 lg:h-10 lg:px-4 lg:py-2 ml-0"
+                                            iconClassName="h-4 w-4 sm:h-4 sm:w-4 lg:h-5 lg:w-5"
+                                        />
                                     </div>
                                 </div>
                             ))}
