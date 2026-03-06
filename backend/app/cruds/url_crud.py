@@ -5,7 +5,12 @@ from app.models.url_model import URL
 
 # Retrieve a URL entry from the database based on the provided code
 def get_url_by_code(db: Session, code: str):
-    return db.query(URL).filter(URL.code == code, URL.delete_at > datetime.now(timezone.utc) or URL.delete_at.is_(None)).first()
+    return db.query(URL).filter(
+        URL.code == code, 
+        or_(
+            URL.delete_at > datetime.now(timezone.utc),
+            URL.delete_at.is_(None)
+        )).first()
 
 # Retrieve all URL entries from the database for a specific user
 def get_urls_by_user(db: Session, user_id: int):
