@@ -1,8 +1,5 @@
 from fastapi import FastAPI
-from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
-from app.db.session import engine
-from app.db.base import Base
 from app.api.routes.url_routes import router as shorten_router
 from app.api.routes.auth_routes import router as auth_router
 from app.api.routes.reset_routes import router as reset_router
@@ -11,13 +8,9 @@ from app.core.config import settings
 from app.services.cleanup import delete_expired
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Deletes expired data on startup
-    delete_expired()
-    yield
+delete_expired()
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 app.include_router(shorten_router)
 app.include_router(auth_router)
