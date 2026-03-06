@@ -81,7 +81,7 @@ export default function Home() {
         </div>
 
         <div className="flex justify-center">
-          <div className="w-100">
+          <div className="w-full max-w-[18rem] sm:max-w-none sm:w-100">
             <LinkExpirerDropdown value={expiration} onChange={setExpiration} showNever={user?.admin === true}/> 
           </div>
         </div>
