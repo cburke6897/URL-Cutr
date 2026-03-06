@@ -16,8 +16,6 @@ from app.services.cleanup import delete_expired
 async def lifespan(app: FastAPI):
     # Load valid TLDs at startup
     await load_tlds()
-    # Create database tables based on the defined models
-    Base.metadata.create_all(bind=engine)
     # Deletes expired data on startup
     delete_expired()
     yield
