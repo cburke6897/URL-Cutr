@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
 import DropdownMenu from "../components/DropdownMenu";
-import InfoCard from "../components/InfoCard";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { signup, login } from "../utils/Auth";
 
@@ -56,9 +55,8 @@ export default function Auth() {
     };
 
     return (
-        <div className="min-h-screen flex justify-center items-start bg-bg-light dark:bg-bg-dark transition-colors p-4 pt-[7.5%]">
+        <div className="min-h-dvh flex justify-center items-start bg-bg-light dark:bg-bg-dark transition-colors p-4 pt-[12svh] md:pt-[7.5%]">
             <DropdownMenu />
-            <InfoCard />
             <div className="min-h-104 w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-6 rounded-xl shadow-lg text-center transition-colors">
                 <h1 className="text-text-light dark:text-text-dark text-3xl font-bold mb-2 transition-colors">
                     {isSignup ? "Create your account" : "Welcome back"}

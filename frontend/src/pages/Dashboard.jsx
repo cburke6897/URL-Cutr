@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import DropdownMenu from "../components/DropdownMenu";
 import UsernameLabel from "../components/UsernameLabel";
 import CopyButton from "../components/CopyButton";
-import InfoCard from "../components/InfoCard";
 import { fetchCurrentUser } from "../utils/User";
 import { authFetch } from "../utils/RefreshToken";
 import DeleteButton from "../components/DeleteButton";
@@ -89,9 +88,8 @@ export default function Dashboard() {
     const currentUrls = urls.slice(startIndex, startIndex + urlsPerPage);
 
     return (
-        <div className="h-screen overflow-hidden bg-bg-light dark:bg-bg-dark transition-colors">
+        <div className="h-dvh overflow-hidden bg-bg-light dark:bg-bg-dark transition-colors">
             <DropdownMenu />
-            <InfoCard />
             {user && <UsernameLabel username={user.username} admin = {user.admin} />}
             
             <div className="h-full flex flex-col items-center justify-start pt-20 px-4 overflow-hidden">
