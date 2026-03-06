@@ -13,3 +13,7 @@ class URLResponse(BaseModel):
     clicks: int
     created_at: str
     delete_at: str | None = None
+
+
+class URLDeleteRequest(BaseModel):
+    code: str
