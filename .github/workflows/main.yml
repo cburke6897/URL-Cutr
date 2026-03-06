@@ -2,10 +2,11 @@ name: Linux_Container_Workflow
 
 on:
   push:
-    paths:
-      - "backend/**"
     branches:
       - main
+    paths:
+      - "backend/**"
+      - ".github/workflows/main.yml"
 
 jobs:
   build-and-deploy:
@@ -44,6 +45,7 @@ jobs:
           test -n "${{ secrets.REGISTRY_LOGIN_SERVER }}" || (echo "::error::REGISTRY_LOGIN_SERVER missing"; exit 1)
           test -n "${{ secrets.REGISTRY_USERNAME }}" || (echo "::error::REGISTRY_USERNAME missing"; exit 1)
           test -n "${{ secrets.REGISTRY_PASSWORD }}" || (echo "::error::REGISTRY_PASSWORD missing"; exit 1)
+          test -n "${{ secrets.DATABASE_URL }}" || (echo "::error::DATABASE_URL missing"; exit 1)
 
           echo "Infrastructure secrets validated."
 
@@ -54,7 +56,20 @@ jobs:
           IMAGE="${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}"
           docker build -t "$IMAGE" backend
           docker push "$IMAGE"
-          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+
+      - name: Get runner public IP
+        id: ip
+        run: echo "ip=$(curl -s https://api.ipify.org)" >> $GITHUB_OUTPUT
+
+      - name: Allow GitHub runner IP in Azure SQL firewall
+        run: |
+          az sql server firewall-rule create \
+            --resource-group ${{ secrets.RESOURCE_GROUP }} \
+            --server cutr-sql \
+            --name github-runner \
+            --start-ip-address ${{ steps.ip.outputs.ip }} \
+            --end-ip-address ${{ steps.ip.outputs.ip }}
 
       - name: Run Alembic migrations in container
         shell: bash
@@ -67,7 +82,6 @@ jobs:
             "$IMAGE" \
             sh -c "alembic upgrade head"
 
-
       - name: Deploy to Azure Container Instances (ACI)
         shell: bash
         run: |
@@ -78,8 +92,7 @@ jobs:
           LOCATION="${{ secrets.LOCATION }}"
           ACI_NAME="${ACI_NAME:-aci-cutr}"
           LOCATION="${LOCATION:-centralus}"
-
-          IMAGE="${IMAGE}"
+          IMAGE="${IMAGE:?IMAGE not set}"
 
           DNS_RAW="${{ github.event.repository.name }}"
           DNS_LABEL="$(echo "$DNS_RAW" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-' | sed 's/^-*//; s/-*$//' | cut -c1-63)"
@@ -103,8 +116,17 @@ jobs:
             --cpu 1 \
             --memory 1.5 \
             --restart-policy Always \
+            --environment-variables DATABASE_URL="${{ secrets.DATABASE_URL }}" \
             --command-line "sh -c 'set -eux; echo BOOT; python -V; python -c \"import pyodbc; print(pyodbc.drivers())\"; odbcinst -q -d || true; echo STARTING; exec uvicorn app.main:app --host 0.0.0.0 --port 8000'"
 
+      - name: Remove GitHub runner firewall rule
+        if: always()
+        run: |
+          az sql server firewall-rule delete \
+            --resource-group ${{ secrets.RESOURCE_GROUP }} \
+            --server cutr-sql \
+            --name github-runner
+      
       - name: Show ACI state + events + previousState
         if: always()
         shell: bash
