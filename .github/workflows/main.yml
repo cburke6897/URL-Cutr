@@ -50,6 +50,16 @@ jobs:
           docker push "$IMAGE"
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
 
+      - name: Run Alembic migrations
+        run: |
+          set -euo pipefail
+          cd backend
+          pip install -r requirements.txt
+          alembic upgrade head
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+
       - name: Deploy to Azure Container Instances (ACI)
         shell: bash
         run: |
