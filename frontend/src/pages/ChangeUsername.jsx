@@ -17,11 +17,24 @@ export default function ChangeUsername() {
 
     useEffect(() => {
         async function init() {
-            setUser(await fetchCurrentUser());
+            const token = localStorage.getItem("token");
+            if (!token) {
+                navigate("/");
+                return;
+            }
+
+            const userData = await fetchCurrentUser();
+            if (!userData) {
+                localStorage.removeItem("token");
+                navigate("/");
+                return;
+            }
+
+            setUser(userData);
         }
 
         init();
-    }, []);
+    }, [navigate]);
 
     const handleChangeUsername = async () => {
         await changeUsername({ email, password, newUsername, navigate, setError });
