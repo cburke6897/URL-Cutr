@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes.url_routes import router as shorten_router
@@ -21,6 +23,10 @@ def add_www(url: str) -> str:
     if "://www." in url:
         return url
     return url.replace("://", "://www.", 1)
+
+
+logger = logging.getLogger("uvicorn.error")
+logger.info("FRONTEND URL: %r", settings.frontend_url)
 
 # Add CORS middleware
 app.add_middleware(
