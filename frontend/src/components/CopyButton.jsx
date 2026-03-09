@@ -1,6 +1,6 @@
 import { ClipboardDocumentIcon } from '@heroicons/react/24/outline'
 
-export default function CopyButton({ text, disabled = false }) {
+export default function CopyButton({ text, disabled = false, className = "", iconClassName = "" }) {
     const copyToClipboard = async () => {
         if (disabled) return;
         try {
@@ -17,9 +17,9 @@ export default function CopyButton({ text, disabled = false }) {
           disabled
             ? "bg-gray-400 dark:bg-gray-600 text-gray-600 dark:text-gray-500 cursor-not-allowed opacity-50"
             : "bg-button hover:bg-button-hover dark:bg-button-dark dark:hover:bg-button-hover-dark text-white"
-        }`}
+        } ${className}`}
         title={disabled ? 'Generate a cut URL first' : 'Copy to clipboard'}>
-            <ClipboardDocumentIcon className="h-5 w-5" />
+            <ClipboardDocumentIcon className={`h-5 w-5 ${iconClassName}`} />
         </button>
     )
 }

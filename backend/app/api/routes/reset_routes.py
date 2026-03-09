@@ -4,7 +4,7 @@ import secrets
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db.session import get_db
-from app.cruds.user_crud import get_user_by_email
+from app.cruds.user_crud import get_user_by_email, set_password
 from app.schemas.reset_schema import ResetPasswordEmail, VerifyTokenRequest, ResetPassword
 from app.cruds.reset_token_crud import save_reset_token, verify_and_get_reset_token, delete_reset_token
 
@@ -105,7 +105,7 @@ def reset_password(payload: ResetPassword, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     
     # Update the password
-    user.set_password(payload.new_password)
+    set_password(user, payload.new_password)
     
     # Delete the used token
     delete_reset_token(db, token_record.id)

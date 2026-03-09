@@ -62,7 +62,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
+    <div className="min-h-dvh flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
       {user && <UsernameLabel username={user.username} admin = {user.admin} />}
       <DropdownMenu/>
       <div 
@@ -81,7 +81,7 @@ export default function Home() {
         </div>
 
         <div className="flex justify-center">
-          <div className="w-100">
+          <div className="w-full max-w-[18rem] sm:max-w-none sm:w-100">
             <LinkExpirerDropdown value={expiration} onChange={setExpiration} showNever={user?.admin === true}/> 
           </div>
         </div>

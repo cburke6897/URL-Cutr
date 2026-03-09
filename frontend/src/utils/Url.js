@@ -57,12 +57,13 @@ export const shortenUrl = async (url, expiration, code) => {
 
 export const deleteUrl = async (navigate, code) => {
    const token = localStorage.getItem("token");
-   const response = await authFetch(`${Settings.BACKEND_URL}/delete/${code}`, {
+   const response = await authFetch(`${Settings.BACKEND_URL}/delete`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ code }),
     });
     if (!response.ok) {
       throw new Error("Failed to delete URL");

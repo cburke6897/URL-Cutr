@@ -4,7 +4,6 @@ import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
 import DropdownMenu from "../components/DropdownMenu";
 import UsernameLabel from "../components/UsernameLabel";
-import InfoCard from "../components/InfoCard";
 import { resetPassword } from "../utils/ResetPassword";
 import { fetchCurrentUser } from "../utils/User";
 
@@ -46,9 +45,10 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-start bg-bg-light dark:bg-bg-dark transition-colors p-4 pt-[7.5%]">
+    <div className="min-h-dvh flex justify-center items-start bg-bg-light dark:bg-bg-dark transition-colors p-4 pt-[30svh]">
       {user && <UsernameLabel username={user.username} admin={user.admin} />}
-      <DropdownMenu />      <InfoCard />      <div className="w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
+      <DropdownMenu />
+      <div className="w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
         <label className="block text-text-light dark:text-text-dark text-3xl font-bold mb-6 transition-colors">
           Password Reset
         </label>

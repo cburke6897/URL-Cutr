@@ -1,14 +1,25 @@
 from datetime import datetime, timezone, timedelta
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from app.models.url_model import URL
 
 # Retrieve a URL entry from the database based on the provided code
 def get_url_by_code(db: Session, code: str):
-    return db.query(URL).filter(URL.code == code).first()
+    return db.query(URL).filter(
+        URL.code == code, 
+        or_(
+            URL.delete_at > datetime.now(timezone.utc),
+            URL.delete_at.is_(None)
+        )).first()
 
 # Retrieve all URL entries from the database for a specific user
 def get_urls_by_user(db: Session, user_id: int):
-    return db.query(URL).filter(URL.created_by == user_id).order_by(URL.created_at.desc()).all()
+    return db.query(URL).filter(
+        URL.created_by == user_id, 
+        or_(
+            URL.delete_at > datetime.now(timezone.utc),
+                URL.delete_at.is_(None)
+        )).order_by(URL.created_at.desc()).all()
 
 # Create a new URL entry in the database
 def create(db: Session, original_url: str, code: str, delete_after: int, created_by: int | None = None):

@@ -4,7 +4,6 @@ import TextInput from "../components/TextInput";
 import EnterButton from "../components/EnterButton";
 import DropdownMenu from "../components/DropdownMenu";
 import UsernameLabel from "../components/UsernameLabel";
-import InfoCard from "../components/InfoCard";
 import { changeUsername } from "../utils/Auth";
 import { fetchCurrentUser } from "../utils/User";
 
@@ -18,21 +17,33 @@ export default function ChangeUsername() {
 
     useEffect(() => {
         async function init() {
-            setUser(await fetchCurrentUser());
+            const token = localStorage.getItem("token");
+            if (!token) {
+                navigate("/");
+                return;
+            }
+
+            const userData = await fetchCurrentUser();
+            if (!userData) {
+                localStorage.removeItem("token");
+                navigate("/");
+                return;
+            }
+
+            setUser(userData);
         }
 
         init();
-    }, []);
+    }, [navigate]);
 
     const handleChangeUsername = async () => {
         await changeUsername({ email, password, newUsername, navigate, setError });
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
+        <div className="min-h-dvh flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
             <DropdownMenu />
             {user && <UsernameLabel username={user.username} admin={user.admin} />}
-            <InfoCard />
             <div className="min-h-[23.8rem] w-full max-w-lg bg-surface-light dark:bg-surface-dark p-8 pb-4 rounded-xl shadow-lg text-center transition-colors">
                 <h1 className="text-text-light dark:text-text-dark text-3xl font-bold mb-4 transition-colors">
                     Change Username

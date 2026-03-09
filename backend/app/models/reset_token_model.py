@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, DateTime, BigInteger, func
-from app.db.base import Base
+from app.db.base_class import Base
 
 class ResetToken(Base):
     __tablename__ = "reset_tokens"

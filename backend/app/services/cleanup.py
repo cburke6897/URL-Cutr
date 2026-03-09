@@ -4,16 +4,13 @@ from app.models.refresh_token_model import RefreshToken
 from app.models.delete_token_model import DeleteToken
 from app.db.session import SessionLocal
 from datetime import datetime, timezone
-import asyncio
 
-async def delete_expired_urls_periodically(period_seconds: int = 60):
-    while True:
-        delete_expired_urls()
-        delete_expired_refresh_tokens()
-        delete_expired_reset_tokens()
-        delete_expired_delete_tokens()
-        # Wait for 1 minute before checking again
-        await asyncio.sleep(period_seconds)
+def delete_expired():
+    delete_expired_urls()
+    delete_expired_refresh_tokens()
+    delete_expired_reset_tokens()
+    delete_expired_delete_tokens()
+
 
 def delete_expired_urls():
     db = SessionLocal()

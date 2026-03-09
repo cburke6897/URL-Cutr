@@ -3,12 +3,22 @@ import { useNavigate } from "react-router-dom";
 import DropdownMenu from "../components/DropdownMenu";
 import UsernameLabel from "../components/UsernameLabel";
 import CopyButton from "../components/CopyButton";
-import InfoCard from "../components/InfoCard";
 import { fetchCurrentUser } from "../utils/User";
 import { authFetch } from "../utils/RefreshToken";
 import DeleteButton from "../components/DeleteButton";
 import { deleteUrl } from "../utils/Url";
 import Settings from "../utils/Settings";
+
+const getUrlsPerPage = () => {
+    if (typeof window === "undefined") return 7;
+
+    const { innerWidth: width, innerHeight: height } = window;
+
+    if (width < 640 || height < 700) return 4;
+    if (width < 1024 || height < 820) return 6;
+    if (width < 1440 || height < 940) return 7;
+    return 9;
+};
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -17,7 +27,7 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const urlsPerPage = 7;
+    const [urlsPerPage, setUrlsPerPage] = useState(getUrlsPerPage);
 
     useEffect(() => {
         async function init() {
@@ -51,6 +61,19 @@ export default function Dashboard() {
         return () => {
             document.body.style.overflow = previousBodyOverflow;
             document.documentElement.style.overflow = previousHtmlOverflow;
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            const nextUrlsPerPage = getUrlsPerPage();
+            setUrlsPerPage((prev) => (prev === nextUrlsPerPage ? prev : nextUrlsPerPage));
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
         };
     }, []);
 
@@ -88,10 +111,13 @@ export default function Dashboard() {
     const startIndex = (currentPage - 1) * urlsPerPage;
     const currentUrls = urls.slice(startIndex, startIndex + urlsPerPage);
 
+    useEffect(() => {
+        setCurrentPage((prev) => Math.min(prev, totalPages));
+    }, [totalPages]);
+
     return (
-        <div className="h-screen overflow-hidden bg-bg-light dark:bg-bg-dark transition-colors">
+        <div className="h-dvh overflow-hidden bg-bg-light dark:bg-bg-dark transition-colors">
             <DropdownMenu />
-            <InfoCard />
             {user && <UsernameLabel username={user.username} admin = {user.admin} />}
             
             <div className="h-full flex flex-col items-center justify-start pt-20 px-4 overflow-hidden">
@@ -119,7 +145,7 @@ export default function Dashboard() {
                             {currentUrls.map((url, index) => (
                                 <div 
                                     key={url.id || url.code} 
-                                    className="bg-bg-light dark:bg-bg-dark rounded-lg px-4 py-2 border border-border dark:border-border-dark transition-colors flex items-center gap-4"
+                                    className="bg-bg-light dark:bg-bg-dark rounded-lg px-3 py-2 sm:px-4 sm:py-3 lg:px-5 lg:py-4 border border-border dark:border-border-dark transition-colors flex items-center gap-2 sm:gap-3 lg:gap-4 min-h-16 sm:min-h-20 lg:min-h-24"
                                 >
                                     <div className="w-8 text-text-light dark:text-text-dark font-semibold">
                                         {startIndex + index + 1}.
@@ -142,24 +168,33 @@ export default function Dashboard() {
                                             href={url.original_url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-text-muted dark:text-text-muted-dark text-sm truncate block hover:text-link dark:hover:text-link-dark"
+                                            className="text-text-muted dark:text-text-muted-dark text-sm truncate hidden sm:block hover:text-link dark:hover:text-link-dark"
                                             title={url.original_url}
                                         >
                                             {url.original_url}
                                         </a>
                                     </div>
 
-                                    <div className="flex items-center gap-4 text-sm text-text-light dark:text-text-dark whitespace-nowrap">
+                                    <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 text-xs sm:text-sm text-text-light dark:text-text-dark whitespace-nowrap">
                                         <span className="w-20">Clicks: {url.clicks}</span>
-                                        <span className="w-48 text-xs text-text-muted dark:text-text-muted-dark">
+                                        <span className="hidden lg:block w-48 text-xs text-text-muted dark:text-text-muted-dark">
                                             Created: {formatDate(url.created_at)}
                                         </span>
-                                        <span className="w-48 text-xs text-text-muted dark:text-text-muted-dark">
+                                        <span className="hidden lg:block w-48 text-xs text-text-muted dark:text-text-muted-dark">
                                             Expires: {formatDate(url.delete_at)}
                                         </span>
                                         
-                                        <CopyButton text={url.short_url} />
-                                        <DeleteButton onClick={() => deleteUrl(navigate, url.code)} title="Delete URL" />
+                                        <CopyButton
+                                            text={url.short_url}
+                                            className="h-8 px-2 py-1 sm:h-9 sm:px-3 sm:py-2 lg:h-10 lg:px-4 lg:py-2 ml-0"
+                                            iconClassName="h-4 w-4 sm:h-4 sm:w-4 lg:h-5 lg:w-5"
+                                        />
+                                        <DeleteButton
+                                            onClick={() => deleteUrl(navigate, url.code)}
+                                            title="Delete URL"
+                                            className="h-8 px-2 py-1 sm:h-9 sm:px-3 sm:py-2 lg:h-10 lg:px-4 lg:py-2 ml-0"
+                                            iconClassName="h-4 w-4 sm:h-4 sm:w-4 lg:h-5 lg:w-5"
+                                        />
                                     </div>
                                 </div>
                             ))}

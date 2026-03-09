@@ -2,15 +2,18 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from app.services.cache import redis_client
 from sqlalchemy.orm import Session
-from app.schemas.url_schema import URLCreate, URLResponse
+from app.schemas.url_schema import URLCreate, URLDeleteRequest, URLResponse
 from app.cruds import url_crud
 from app.db.session import get_db
 from app.services.shortener import generate_code
+from app.services.cleanup import delete_expired
 from app.services.rate_limit import rate_limit
 from app.core.tlds import is_valid_tld
 from app.core.deps import get_current_user, get_current_user_optional
 from app.core.config import settings
+import time, random
 
+last_cleanup = 0
 
 router = APIRouter()
 
@@ -73,14 +76,23 @@ def redirect(code: str, db: Session = Depends(get_db)):
     url.clicks += 1
     db.commit()
 
-    # Check if the original URL is cached in Redis using the code as the key
-    cached_url = redis_client.get(f"url:{code}")
-    if cached_url:
-        return RedirectResponse(cached_url, status_code=302)
+    if redis_client:
+        # Check if the original URL is cached in Redis using the code as the key
+        cached_url = redis_client.get(f"url:{code}")
+        if cached_url:
+            return RedirectResponse(cached_url, status_code=302)
     
     # If the original URL is not cached, retrieve it from the database, cache it in Redis, and redirect to it
     original_url = url.original_url
-    redis_client.set(f"url:{code}", original_url)
+    if redis_client:
+        redis_client.set(f"url:{code}", original_url)
+
+    # Implement a random cleanup mechanism to delete expired URLs from the database
+    now = time.time()
+    if (random.random() < 0.05 and now - last_cleanup > 3600):  # 5% chance to trigger cleanup, and only if it's been more than an hour since the last cleanup
+        delete_expired()
+        last_cleanup = now
+
     return RedirectResponse(original_url, status_code=302)
 
 @router.get("/my-urls", response_model=list[URLResponse])
@@ -103,16 +115,16 @@ def get_my_urls(request: Request, current_user = Depends(get_current_user), db: 
 
     return response
 
-@router.post("/delete/{code}")
-def delete_url(code: str, current_user = Depends(get_current_user), db: Session = Depends(get_db)):
-    url = url_crud.get_url_by_code(db, code)
+@router.post("/delete")
+def delete_url(payload: URLDeleteRequest, current_user = Depends(get_current_user), db: Session = Depends(get_db)):
+    url = url_crud.get_url_by_code(db, payload.code)
     if not url:
         raise HTTPException(status_code=404, detail="URL not found")
     
     if url.created_by != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to delete this URL")
     
-    success = url_crud.delete(db, code)
+    success = url_crud.delete(db, payload.code)
     if not success:
         raise HTTPException(status_code=500, detail="Failed to delete URL")
     

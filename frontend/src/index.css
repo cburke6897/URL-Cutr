@@ -83,9 +83,30 @@
 
 @custom-variant dark (&:is(.dark, .dark *));
 
-html, body {
+html,
+body,
+#root {
+  height: 100%;
+  min-height: 100dvh;
+}
+
+html,
+body {
+  margin: 0;
+  overflow: hidden;
   overscroll-behavior: none;
 }
 
 :root { color-scheme: light; }
 .dark { color-scheme: dark; }
+
+/* Global pressed-state darkening for clickable controls across all pages. */
+:where(button, [role="button"], select):active:not(:disabled) {
+  filter: brightness(0.86);
+}
+
+/* Keep native dropdown options visibly darker when an item is selected/pressed. */
+select option:checked,
+select option:active {
+  filter: brightness(0.86);
+}

@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app.models.user_model import User
 from app.core.security import hash_string, verify_string
@@ -30,3 +31,10 @@ def authenticate_user(db: Session, email: str, password: str):
     if not verify_string(password, user.hashed_password):
         return None
     return user
+
+    
+def set_password(user, plain_password: str):
+    if(verify_string(plain_password, user.hashed_password)):
+        raise HTTPException(status_code=400, detail="New password must be different from the current password")
+
+    user.hashed_password = hash_string(plain_password)
