@@ -23,7 +23,7 @@ export default function ChangePassword() {
         async function init() {
             const token = searchParams.get("token");
             if (!token) {
-                navigate("/reset-password");
+                navigate(`/reset-password?error=${encodeURIComponent("No reset token found")}`);
                 return;
             }
             
@@ -60,7 +60,8 @@ export default function ChangePassword() {
         init();
     }, [searchParams, navigate]);
 
-    const handleChangePassword = async () => {
+    const handleChangePassword = async (e) => {
+        e.preventDefault();
         const token = searchParams.get("token");
         await changePasswordWithToken({
             token,
