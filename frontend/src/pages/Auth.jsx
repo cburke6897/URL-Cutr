@@ -6,19 +6,25 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { signup, login } from "../utils/Auth";
 
 export default function Auth() {
+    const [searchParams] = useSearchParams();
     const [mode, setMode] = useState("login");
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
-    const [showSuccess, setShowSuccess] = useState(false);
-    const [searchParams] = useSearchParams();
+    const [success, setSuccess] = useState(searchParams.get("success") || "");
 
     const navigate = useNavigate();
-    const successMsg = searchParams.get("success");
     const isSignup = mode === "signup";
     const submitText = isSignup ? "Create Account" : "Log In";
+
+    useEffect(() => {
+        const successMessage = searchParams.get("success");
+        if (successMessage) {
+            setSuccess(successMessage);
+        }
+    }, [searchParams, navigate]);
 
     useEffect(() => { // Clear form and messages when switching modes
         setError("");
@@ -39,9 +45,11 @@ export default function Auth() {
         init()
     }, []);
 
+
     const handleSubmit = async () => { // Signup and login logic with client-side validation and error handling
         setError("");
-        
+        setSuccess("");
+
         const result = isSignup 
             ? await signup({ email, username, password, confirmPassword, navigate })
             : await login({ email, password, navigate });
@@ -50,7 +58,7 @@ export default function Auth() {
             setError(result.error);
         } else if (result.switchToLogin) {
             setMode("login"); // Switch to login mode after successful signup
-            setShowSuccess(true); // Show success message
+            setSuccess("Account created successfully! Please log in."); // Show success message
         }
     };
 
@@ -71,6 +79,7 @@ export default function Auth() {
                         type="button"
                         onClick={() => {
                             setMode("login");
+                            setSuccess("");
                         }}
                         className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                         !isSignup
@@ -85,7 +94,7 @@ export default function Auth() {
                         type="button"
                         onClick={() => {
                             setMode("signup");
-                            setShowSuccess(false); // Hide success message when switching to signup
+                            setSuccess("");
                         }}
                         className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                         isSignup
@@ -169,9 +178,9 @@ export default function Auth() {
                         </p>
                     )}
 
-                    {successMsg && showSuccess && (
+                    {success && (
                         <p className="text-success dark:text-success-dark mt-4 font-semibold transition-colors">
-                            {successMsg}
+                            {success}
                         </p>
                     )}
                 </div>
