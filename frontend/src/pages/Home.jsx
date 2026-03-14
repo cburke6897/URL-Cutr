@@ -6,6 +6,7 @@ import LinkExpirerDropdown from "../components/LinkExpirerDropdown";
 import DropdownMenu from "../components/DropdownMenu";
 import UsernameLabel from "../components/UsernameLabel";
 import InfoCard from "../components/InfoCard";
+import AlertModal from "../components/AlertModal";
 import { fetchCurrentUser } from "../utils/User";
 import { shortenUrl } from "../utils/Url";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -18,6 +19,8 @@ export default function Home() {
   const [expiration, setExpiration] = useState(5);
   const [code, setCode] = useState("");
   const [user, setUser] = useState(null);
+  const [showStartupAlert, setShowStartupAlert] = useState(false);
+  const [hasShownStartupAlert, setHasShownStartupAlert] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -42,10 +45,27 @@ export default function Home() {
     init()
   }, []);
 
+  useEffect(() => {
+    if (!showStartupAlert) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShowStartupAlert(false);
+    }, 5000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [showStartupAlert]);
+
   const shorten = async () => {
     setError("");
     setSuccess("");
     setShortUrl("");
+
+    if (!hasShownStartupAlert) {
+      setShowStartupAlert(true);
+      setHasShownStartupAlert(true);
+    }
 
     try {
       const shortUrlResult = await shortenUrl(url, expiration, code);
@@ -63,6 +83,10 @@ export default function Home() {
 
   return (
     <div className="min-h-dvh flex items-center justify-center bg-bg-light dark:bg-bg-dark transition-colors p-4">
+      <AlertModal
+        message={showStartupAlert ? "This may take a few moments if the server needs to start up." : ""}
+        onClose={() => setShowStartupAlert(false)}
+      />
       {user && <UsernameLabel username={user.username} admin = {user.admin} />}
       <DropdownMenu/>
       <div 
